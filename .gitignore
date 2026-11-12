@@ -17,5 +17,16 @@ build-info.json
 # Fichiers privés, propres à un poste (jamais publiés)
 CLAUDE.local.md
 *.local.md
-private-patterns.txt
+private-patterns*.txt
+*.private.txt
 build/eula.txt
+
+# Binaires : jamais dans git (installeurs et portable dans la Release GitHub uniquement)
+*.exe
+*.dll
+*.msi
+*.7z
+*.zip
+*.asar
+*.blockmap
+*.pdf

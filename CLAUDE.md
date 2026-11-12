@@ -125,6 +125,7 @@ Pièges : tests de pointeur dans la zone visible de la page (coordonnées en poi
 | mise à jour par-dessus (scripts/test-update.js) | test:update (15) | 0.12.3 (voir git log) |
 | ocr-engine / ocr-ui (trace de diagnostic), test/lib/ocr-scans.js | test-ocr-ui (39), repro-ocr | 0.12.3 (voir git log) |
 | ocr.js (ORIENT, looksWrong, pickOrientation, sampleRect) | test-ocr (54, § 9) | 0.12.4 (voir git log) |
+| dépôt public : LICENSE / EULA / politique, publish: null, .gitignore (fichiers privés, binaires), aucun fichier suivi > 5 Mo ni binaire ; scripts/scan-private.js (motifs privés HORS du dépôt) | test-public (16), scan-private | dépôt public (voir git log) |
 | ocr-engine.recognizePage (orientation par échantillon), ocr-scans (graine, jeu « orient »), fixture | test-ocr-orient-ui (27, déterministe), test-ocr-ui (39) | 0.12.4 (voir git log) |
 | test:packaged (association : valeur par défaut de .pdf inchangée, OpenWithProgids / classe / Applications / RegisteredApplications posés puis retirés ; rapport des plantages ; refus si installation réelle présente) | test:packaged | 5b (voir git log) |
 | ocr, doc-model.ocr, pdf-edit (couche invisible) | test-ocr (37 vérifications) | 3f (voir git log) |

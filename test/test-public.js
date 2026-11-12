@@ -40,7 +40,10 @@ check('EULA, politique et licences tierces livrées avec l\'application (resourc
 
 // 5. Fichiers privés : jamais suivis
 const gi = read('.gitignore');
-check('.gitignore : CLAUDE.local.md, private-patterns.txt, build/eula.txt', ['CLAUDE.local.md', 'private-patterns.txt', 'build/eula.txt'].every((s) => gi.includes(s)));
+check('.gitignore : CLAUDE.local.md, motifs privés, build/eula.txt, binaires (.exe .dll .msi .7z .zip .asar .pdf)', ['CLAUDE.local.md', 'private-patterns*.txt', 'build/eula.txt', '*.exe', '*.dll', '*.msi', '*.7z', '*.zip', '*.asar', '*.pdf'].every((s) => gi.split(/\r?\n/).includes(s)));
+const tracked = require('child_process').spawnSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).stdout.split('\0').filter(Boolean);
+const big = tracked.filter((f) => fs.statSync(path.join(root, f)).size > 5 * 1024 * 1024);
+check('git : aucun fichier suivi de plus de 5 Mo, aucun binaire (.exe .dll .pdf .msi .7z .zip .asar)', !big.length && !tracked.some((f) => /\.(exe|dll|pdf|msi|7z|zip|asar)$/i.test(f)), big);
 const cl = read('CLAUDE.md');
 check('CLAUDE.md public : aucun chemin de lecteur D:\\ à Z:\\ ni adresse de dépôt GitHub', !/\b[D-Z]:\\/.test(cl) && !/github\.com\//.test(cl));
 check('scanner de données personnelles présent, motifs privés HORS du dépôt', fs.existsSync(path.join(root, 'scripts', 'scan-private.js')) && !fs.existsSync(path.join(root, 'private-patterns.txt')));
