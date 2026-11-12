@@ -1,6 +1,6 @@
 # Spin A Doc — notes pour le service informatique
 
-Version de référence : 0.12.4. Tout ce qui suit est vérifié dans la configuration de construction (`package.json`, section `build`, et
+Version de référence : 1.0.0. Tout ce qui suit est vérifié dans la configuration de construction (`package.json`, section `build`, et
 `build/installer.nsh`) et par le test `npm run test:packaged` (installation et désinstallation silencieuses dans un dossier temporaire).
 
 ## Ce que fait l'installeur
@@ -27,8 +27,8 @@ Version de référence : 0.12.4. Tout ce qui suit est vérifié dans la configur
 ## Installation et désinstallation silencieuses
 
 ```bat
-SpinADoc-Setup-0.12.4.exe /S
-SpinADoc-Setup-0.12.4.exe /S /D=C:\Programmes\SpinADoc
+SpinADoc-Setup-1.0.0.exe /S
+SpinADoc-Setup-1.0.0.exe /S /D=C:\Programmes\SpinADoc
 ```
 
 `/D=` doit être le **dernier** argument, sans guillemets, même si le chemin contient des espaces.
@@ -44,12 +44,16 @@ l'ancien) ne supprime jamais les données.
 
 ## Si l'exécution est bloquée
 
-- Les fichiers ne sont pas signés numériquement : **SmartScreen** peut afficher « Windows a protégé votre ordinateur » (« Informations
-  complémentaires » > « Exécuter quand même »).
+- Les fichiers (installeur, version portable, application) **ne sont pas signés numériquement** : un certificat de signature de code est
+  payant et il n'y a pas de budget pour cela pour l'instant. **Windows SmartScreen** peut donc afficher « Windows a protégé votre ordinateur »
+  au premier lancement. C'est le comportement habituel pour un logiciel non signé et peu téléchargé ; cela ne signale pas un problème détecté
+  dans le fichier. Pour continuer : « Informations complémentaires », puis « Exécuter quand même ».
+- Avant de lancer le fichier, vérifier qu'il est bien celui publié : son empreinte SHA-256 (commande ci-dessous) doit être identique à celle
+  de `SHA256SUMS.txt`, joint à chaque Release (la casse des lettres ne compte pas). Sinon, ne pas le lancer et le télécharger de nouveau.
 - **AppLocker / listes blanches** : autoriser par chemin (`%LOCALAPPDATA%\Programs\Spin A Doc\*`) ou par empreinte du fichier :
 
 ```powershell
-Get-FileHash .\SpinADoc-Setup-0.12.4.exe -Algorithm SHA256
+Get-FileHash .\SpinADoc-Setup-1.0.0.exe -Algorithm SHA256
 Get-FileHash "$env:LOCALAPPDATA\Programs\Spin A Doc\Spin A Doc.exe" -Algorithm SHA256
 ```
 

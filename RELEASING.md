@@ -131,6 +131,36 @@ de `dist/RELEASE-NOTES-x.y.z.md`, joindre les trois fichiers, « Save draft », 
 - Télécharger l'installeur depuis la Release et vérifier son empreinte (`Get-FileHash … -Algorithm SHA256`) contre `SHA256SUMS.txt`.
 - Prévenir les collègues avec le lien de la Release et la marche à suivre ci-dessous.
 
+## Checklist de la première publication (dépôt rendu public)
+
+À faire à la main, dans cet ordre. Rien n'est publié tant que le dépôt est privé et que la Release est en brouillon.
+
+**Réglages du dépôt GitHub** (Settings > General)
+- [ ] Description courte (ex. « Lecteur et éditeur de PDF pour Windows, 100 % hors-ligne, en français ») et sujets (Topics) :
+      `pdf`, `pdf-editor`, `windows`, `electron`, `offline`, `ocr`, `french`.
+- [ ] Features : décocher **Issues**, **Projects**, **Wiki** si inutile, **Discussions** ; Settings > Actions > General : **Disable actions**.
+      (Si les Issues restent fermées, CONTRIBUTING.md doit indiquer un autre moyen de signaler un bogue.)
+
+**Avant le passage en public**
+- [ ] Relecture juridique de `EULA.fr.md` et de `POLITIQUE-CONFIDENTIALITE.md` (par une personne compétente).
+- [ ] Recherche d'antériorité de la marque « Spin A Doc » / « SpinASoft » : bases INPI (data.inpi.fr) et EUIPO (TMview / eSearch plus).
+- [ ] Scan privé final (section 5 bis) : zéro occurrence privée sur l'arbre, `git log -p --all`, l'installeur extrait et les propriétés des exécutables.
+
+**Passage en public** (Settings > General > Danger Zone > Change repository visibility > Public)
+- [ ] Settings > Code security : activer **Secret scanning**, **Push protection** et **Private vulnerability reporting**
+      (nécessaire pour le bouton « Report a vulnerability » de SECURITY.md).
+
+**Tag et Release**
+- [ ] Pousser le tag : `git push origin vx.y.z` (le tag local existe déjà, voir section 6).
+- [ ] Créer la Release en **brouillon** (section 7, `--draft --verify-tag`), relire fichiers joints, tailles et notes.
+- [ ] Publier le brouillon (`gh release edit vx.y.z --draft=false`).
+
+**Après la publication**
+- [ ] Télécharger l'installeur depuis la page de la Release, puis `Get-FileHash .SpinADoc-Setup-x.y.z.exe -Algorithm SHA256` : identique à
+      `SHA256SUMS.txt` (et à `dist/SHA256SUMS.txt` du poste de construction).
+- [ ] Envoyer l'installeur et le portable à **VirusTotal** (virustotal.com, « File ») ; noter le résultat (quelques détections
+      heuristiques sont possibles pour un exécutable non signé) et garder le lien des rapports.
+
 ## Mettre à jour un poste
 
 Spin A Doc n'a **pas de mise à jour automatique** : il ne se connecte jamais à Internet (principe du 100 % hors-ligne). Pour passer à une

@@ -33,9 +33,16 @@ function check(name, cond, detail) {
     const n = await c.ev(`document.querySelectorAll('#help-body .help-sec').length`);
     const links = await c.ev(`JSON.stringify([...document.querySelectorAll('#help-nav a')].map(a=>a.getAttribute('href')))`).then(JSON.parse);
     check(`sommaire : un lien par rubrique (${n} rubriques)`, n >= 15 && links.length === n);
-    const topics = ['demarrer', 'texte', 'annotations', 'mesure', 'pages', 'fusion', 'impression', 'comparer', 'ocr', 'formulaires', 'caviardage', 'document', 'raccourcis', 'limites', 'informatique', 'confidentialite', 'ruban'];
+    const topics = ['demarrer', 'texte', 'annotations', 'mesure', 'pages', 'fusion', 'impression', 'comparer', 'ocr', 'formulaires', 'caviardage', 'document', 'raccourcis', 'limites', 'informatique', 'confidentialite', 'ruban', 'smartscreen'];
     check('raccourcis : aucune touche vide (« Ctrl+Maj++ » affiche la touche +)', (await c.ev(`document.querySelectorAll('#help-body kbd:empty').length`)) === 0);
     check('rubriques demandées toutes présentes', topics.every((t) => links.includes('#aide-' + t)), links);
+    await sleep(200);
+    const hv = await c.ev(`document.getElementById('help-version').textContent`);
+    check('version affichée dans l\'aide = package.json (lue par app.getVersion, pas en dur)', hv === 'Version ' + require('../package.json').version, hv);
+    const lim = await c.ev(`document.getElementById('aide-limites').textContent`);
+    check('limites : réouverture, champs figés, page pivotée, échelle, OCR (manuscrit, fond bruité, « ? »), caviardage', ['réouverture', 'figés', 'pivotée', 'échelle', 'manuscrite', 'bruité', 'couche de texte invisible', 'autre lecteur'].every((w) => lim.includes(w)), lim);
+    const ss = await c.ev(`document.getElementById('aide-smartscreen').textContent`);
+    check('avertissement SmartScreen : non signé, « Exécuter quand même », Get-FileHash', /pas signé/.test(ss) && /Exécuter quand même/.test(ss) && ss.includes('Get-FileHash .\\SpinADoc-Setup-'), ss);
     let bad = [];
     for (const href of links) {
       await c.ev(`(()=>{document.querySelector('#help-nav a[href="${href}"]').scrollIntoView({block:'nearest'}); return 1})()`);

@@ -134,13 +134,19 @@ ${[['F1', 'Aide'], ['Ctrl+O', 'Ouvrir'], ['Ctrl+S', 'Enregistrer'], ['Ctrl+P', '
 </tbody></table>` },
 
   { id: 'limites', title: 'Limites connues', html: `<ul>
-<li>Après réouverture d'un fichier enregistré, les objets ajoutés sont du contenu de page : non déplaçables, non modifiables. Les champs créés se remplissent mais ne se déplacent plus.</li>
-<li>Après une opération de pages, les liens internes et les champs du PDF d'origine ne sont pas conservés (les signets, eux, suivent les pages ; les champs créés dans Spin A Doc sont conservés).</li>
-<li>Texte non éditable sur une page pivotée ; polices d'origine incorporées non réutilisables (Helvetica, Times, Courier) ; caractères hors jeu Windows latin remplacés par « ? ».</li>
-<li>L'échelle des mesures n'est pas lue dans le PDF ; pas d'aimantation sur un plan scanné.</li>
-<li>Formulaires créés : pas de JavaScript (calculs, formats, boutons d'action) ; liste à choix unique.</li>
-<li>Caviardage : pages caviardées transformées en images (plus lourdes, texte à reconnaître par OCR) ; aucune garantie absolue, vérifiez le fichier produit.</li>
-<li>Impression sur imprimante physique et traceur non vérifiée au papier par les tests automatiques.</li></ul>` },
+<li><b>Annotations</b> : après réouverture d'un fichier enregistré, les objets ajoutés sont du contenu de page : non modifiables, non déplaçables.</li>
+<li><b>Champs de formulaire créés</b> : figés après réouverture (ils se remplissent, mais leur position et leurs propriétés ne se modifient plus) ; pas de JavaScript (calculs, formats, boutons d'action) ; liste à choix unique.</li>
+<li><b>Texte</b> : non éditable sur une page pivotée ; polices d'origine incorporées non réutilisables (Helvetica, Times, Courier) ; caractères hors jeu Windows latin remplacés par « ? » dans le texte ajouté.</li>
+<li><b>Mesure</b> : l'échelle n'est pas lue dans le PDF (à saisir ou à calibrer) ; pas d'aimantation sur un plan scanné.</li>
+<li><b>OCR</b> : écriture manuscrite mal lue ; fond gris très bruité ou taché : aucun texte reconnu ; tout caractère non latin est remplacé par « ? » dans la couche de texte invisible.</li>
+<li><b>Caviardage</b> : pages caviardées transformées en images (plus lourdes, texte à reconnaître par OCR) ; aucune garantie absolue : vérifiez toujours le fichier produit dans un autre lecteur PDF avant de le diffuser.</li>
+<li><b>Pages</b> : après une opération de pages, les liens internes et les champs du PDF d'origine ne sont pas conservés (les signets suivent les pages ; les champs créés dans Spin A Doc sont conservés).</li>
+<li><b>Impression</b> sur imprimante physique et traceur non vérifiée au papier par les tests automatiques.</li></ul>` },
+
+  { id: 'smartscreen', title: "Avertissement de Windows à l'installation", html: `
+<p>Spin A Doc n'est pas signé numériquement (un certificat de signature de code est payant, et il n'y a pas de budget pour cela pour l'instant). Windows SmartScreen peut donc afficher « Windows a protégé votre ordinateur » au lancement de l'installeur ou de la version portable. C'est le comportement habituel pour un logiciel non signé et peu téléchargé ; cela ne signale pas un problème détecté dans le fichier.</p>
+${steps('Cliquer sur « Informations complémentaires ».', 'Cliquer sur « Exécuter quand même ».')}
+<p><b>Vérifier le fichier téléchargé</b> : comparer son empreinte SHA-256 avec celle du fichier <code>SHA256SUMS.txt</code> joint à la Release. Dans PowerShell, dans le dossier du téléchargement : <code>Get-FileHash .\\SpinADoc-Setup-x.y.z.exe -Algorithm SHA256</code>. Les deux valeurs doivent être identiques (la casse des lettres ne compte pas) ; sinon, ne pas lancer le fichier et le télécharger de nouveau.</p>` },
 
   { id: 'confidentialite', title: 'Hors-ligne, confidentialité, diagnostic', html: `
 <p>Spin A Doc fonctionne <strong>100 % hors-ligne</strong> : aucune connexion réseau, aucune télémétrie, aucune mise à jour automatique. Toute tentative de
@@ -159,6 +165,6 @@ ${steps('Signaler un problème : Réglages > À propos > « Copier les informati
 sauf si la case « Supprimer aussi mes réglages et ma bibliothèque » est cochée (en silencieux : <code>/DELETEDATA=1</code>).</li>
 <li>Association .pdf : inscription dans « Ouvrir avec » seulement (<code>HKCU\Software\Classes\.pdf\OpenWithProgids</code> = <code>SpinADoc.pdf</code>, RegisteredApplications) ; la valeur par défaut de <code>.pdf</code> n'est jamais modifiée. Tout est retiré à la désinstallation.</li>
 <li>Version portable : aucun installateur, mêmes données dans <code>%APPDATA%\\Spin A Doc</code>.</li>
-<li>Fichiers non signés : SmartScreen peut avertir. AppLocker / listes blanches : autoriser par chemin ou par empreinte SHA-256 (<code>Get-FileHash</code>).</li>
+<li>Fichiers non signés : SmartScreen peut avertir (voir <a href="#aide-smartscreen">Avertissement de Windows à l'installation</a>). AppLocker / listes blanches : autoriser par chemin ou par empreinte SHA-256 (<code>Get-FileHash</code>).</li>
 <li>Licences : application « Tous droits réservés » ; composants tiers sous licences permissives (MIT, Apache-2.0, BSD, ISC, OFL), liste dans À propos.</li></ul>` },
 ];

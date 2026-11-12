@@ -1,6 +1,6 @@
 {
   "name": "spin-a-doc",
-  "version": "0.12.4",
+  "version": "1.0.0",
   "description": "Spin A Doc - viewer et éditeur PDF",
   "main": "main.js",
   "author": "SpinASoft",

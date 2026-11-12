@@ -3,10 +3,28 @@
 Une ligne par fonction importante. Les dates sont celles du dépôt. Les versions 0.x sont des versions de travail.
 Pour la mise à jour d'un poste, voir [RELEASING.md](RELEASING.md#mettre-à-jour-un-poste).
 
-## À venir (première version publique)
+## 1.0.0 — 2026-11-12
+Première version publique. Lecteur et éditeur de PDF pour Windows, 100 % hors-ligne, interface en français. Fonctions
+(vérifiées par les tests automatiques ; impression sur papier non vérifiée, voir « Limites connues » dans le README) :
+- Lecture : onglets, miniatures, signets, recherche, zoom ; « Ouvrir avec » pour les PDF, sans remplacer le lecteur par défaut.
+- Annotations : texte, modification de texte existant par recouvrement, formes, nuages, surlignage, crayon, légende fléchée, notes, tampons,
+  images, signature dessinée (sans valeur juridique).
+- Mesure : échelle saisie ou calibrée, distances, surfaces, angles, cotes, aimantation sur les traits du plan, export CSV.
+- Pages : rotation, déplacement, duplication, suppression, insertion, recadrage, extraction, division, numérotation ; fusion de plusieurs PDF.
+- Impression à la taille réelle, en couleur, en gris ou en noir et blanc, sans bloquer l'application.
+- Comparaison de deux versions d'un plan (zones modifiées, texte), avec rapport PDF.
+- Reconnaissance du texte (OCR) en français et en anglais, sans réseau.
+- Formulaires : remplissage des champs existants et création de champs.
+- Caviardage par transformation des pages en images et nettoyage des structures cachées (à vérifier dans un autre lecteur avant diffusion).
+- Document : propriétés, protection par mot de passe, optimisation, export des pages en images.
+- Aide intégrée (F1), fenêtre À propos, informations de diagnostic sans nom de fichier ni chemin.
+
+Publication :
 - Titulaire des droits : SpinASoft ; contrat de licence utilisateur final (EULA) affiché par l'installeur ; politique de confidentialité.
 - Plus de fichier de configuration de mise à jour dans l'application (aucune mise à jour automatique).
 - Licences tierces complétées (modèles de langue de l'OCR, polices, icônes) et livrées dans le dossier de l'application.
+- Logiciel non signé numériquement : avertissement possible de Windows SmartScreen, vérification par empreinte SHA-256 (README, aide).
+- Limites connues mises à jour (README, aide).
 
 ## 0.12.4 — 2026-11-12
 - OCR : détection de l'orientation plus fiable. Une page posée de côté ou à l'envers est redressée même quand la lecture à l'endroit semble

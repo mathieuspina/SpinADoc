@@ -4,6 +4,8 @@ Lecteur et éditeur de PDF pour Windows, pensé pour les plans (charpente, bâti
 réelle, comparer deux indices, reconnaître le texte, créer et remplir des formulaires, caviarder. **100 % hors-ligne** : aucune connexion réseau,
 aucune télémétrie, aucune mise à jour automatique. Interface en français. Aide intégrée : touche **F1**.
 
+Version actuelle : **1.0.0** (historique : [CHANGELOG.md](CHANGELOG.md)).
+
 ## Fonctions
 
 | Domaine | Ce que fait Spin A Doc |
@@ -33,6 +35,24 @@ Ce que chaque fonction fait exactement, ses étapes et ses pièges : aide intég
   est cochée (en silencieux : `/DELETEDATA=1`).
 - Fichiers PDF : Spin A Doc est ajouté à « Ouvrir avec », sans remplacer le lecteur par défaut (choix dans les Paramètres de Windows).
 - Service informatique : [docs/NOTES-INFORMATIQUE.md](docs/NOTES-INFORMATIQUE.md).
+
+## Avertissement de Windows au premier lancement
+
+Spin A Doc n'est pas signé numériquement (un certificat de signature de code est payant, et il n'y a pas de budget pour cela pour l'instant).
+Windows SmartScreen peut donc afficher « Windows a protégé votre ordinateur » au lancement de l'installeur ou de la version portable.
+C'est le comportement habituel pour un logiciel non signé et peu téléchargé ; cela ne signale pas un problème détecté dans le fichier.
+
+Pour continuer : cliquer sur **« Informations complémentaires »**, puis sur **« Exécuter quand même »**.
+
+Pour vérifier que le fichier est bien celui publié, comparer son empreinte SHA-256 avec celle du fichier `SHA256SUMS.txt` joint à la
+Release (PowerShell, dans le dossier du téléchargement) :
+
+```powershell
+Get-FileHash .SpinADoc-Setup-1.0.0.exe -Algorithm SHA256
+```
+
+Les deux valeurs doivent être identiques (la casse des lettres ne compte pas). Si elles diffèrent, ne pas lancer le fichier et le télécharger
+de nouveau depuis la page des Releases du dépôt.
 
 ## Développement
 
@@ -71,12 +91,20 @@ personnelle ou professionnelle, selon le contrat de licence `EULA.fr.md` (affich
 ni envoyée (`POLITIQUE-CONFIDENTIALITE.md`). Composants tiers : licences permissives (MIT, Apache-2.0, BSD, ISC, OFL), texte complet dans
 `THIRD_PARTY_LICENSES` et dans l'application (Réglages > À propos).
 
+Signaler une faille de sécurité : [SECURITY.md](SECURITY.md). Signalements et suggestions : [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Limites connues
 
-- Après réouverture d'un fichier enregistré, les objets ajoutés sont du contenu de page (non déplaçables) ; les champs créés se remplissent mais ne se déplacent plus.
-- Après une opération de pages, les liens internes et les champs du PDF d'origine ne sont pas conservés (signets et champs créés le sont).
-- Texte non éditable sur une page pivotée ; polices d'origine incorporées non réutilisables ; caractères hors jeu Windows latin remplacés par « ? ».
-- Échelle de mesure non lue dans le PDF ; pas d'aimantation sur un plan scanné.
-- Formulaires créés sans JavaScript (pas de calcul ni de contrôle de format).
-- Caviardage : pages caviardées transformées en images ; aucune garantie absolue, vérifiez le fichier produit dans un autre lecteur.
-- Impression sur imprimante physique ou traceur : non vérifiée au papier par les tests automatiques.
+- **Annotations** : après réouverture d'un fichier enregistré, les objets ajoutés (texte, formes, tampons, mesures…) font partie du contenu de
+  la page : ils ne sont plus modifiables ni déplaçables.
+- **Champs de formulaire créés** : figés après réouverture ; ils se remplissent, mais leur position et leurs propriétés ne se modifient plus.
+  Pas de JavaScript (calculs, formats, boutons d'action).
+- **Texte** : non éditable sur une page pivotée ; polices d'origine incorporées non réutilisables ; caractères hors jeu Windows latin
+  remplacés par « ? » dans le texte ajouté.
+- **Mesure** : l'échelle n'est pas lue dans le PDF (à saisir ou à calibrer) ; pas d'aimantation sur un plan scanné.
+- **OCR** : écriture manuscrite mal lue ; fond gris très bruité ou taché : aucun texte reconnu ; tout caractère non latin est remplacé par « ? »
+  dans la couche de texte invisible.
+- **Caviardage** : les pages caviardées sont transformées en images ; aucune garantie absolue : vérifiez toujours le fichier produit dans un
+  autre lecteur PDF avant de le diffuser.
+- **Pages** : après une opération de pages, les liens internes et les champs du PDF d'origine ne sont pas conservés (signets et champs créés le sont).
+- **Impression** sur imprimante physique ou traceur : non vérifiée au papier par les tests automatiques.

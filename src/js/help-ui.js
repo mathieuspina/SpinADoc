@@ -31,6 +31,9 @@ function build() {
     if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); if ($('help-q').value) { $('help-q').value = ''; filter(''); } else close(); }
     else if (e.key !== 'F1') e.stopPropagation(); // les raccourcis de l'application ne s'appliquent pas pendant la lecture
   });
+  // version lue dans package.json par le processus principal (app.getVersion), jamais écrite en dur
+  const api = window.spinadoc;
+  if (api && api.getAbout) api.getAbout().then((i) => { $('help-version').textContent = 'Version ' + i.version; }).catch(() => {});
   built = true;
 }
 
