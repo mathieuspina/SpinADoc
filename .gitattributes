@@ -1,0 +1,33 @@
+# Fins de ligne : tout fichier texte est en LF, dans le dépôt ET dans la copie de travail, quel que soit core.autocrlf du PC
+# (eol=lf l'emporte). Les deux PC ont ainsi exactement les mêmes octets, identiques à ce qu'écrivent les scripts Node : plus de faux
+# « modifié » (avec autocrlf=true, un fichier extrait en CRLF puis réécrit en LF par un outil apparaissait modifié sans différence).
+# Les fichiers régénérés par des scripts (icônes, licences tierces) sont gardés octet pour octet, sans aucune conversion.
+# Les binaires ne sont jamais convertis ni comparés comme du texte. Fichiers Windows à garder en CRLF (.bat, .cmd) : aucun pour l'instant.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+src/icons/** -text
+THIRD_PARTY_LICENSES -text
+
+*.png binary
+*.ico binary
+*.icns binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.pdf binary
+*.exe binary
+*.dll binary
+*.wasm binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pfb binary
+*.bcmap binary
+*.traineddata binary
+*.gz binary
+*.zip binary
+*.7z binary

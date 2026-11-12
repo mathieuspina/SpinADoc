@@ -1,0 +1,21 @@
+node_modules/
+dist/
+vendor/
+test-logs/
+coverage/
+*.log
+*.tmp
+.env
+.env.*
+.cursor/
+.vscode/
+Thumbs.db
+desktop.ini
+.DS_Store
+build-info.json
+
+# Fichiers privés, propres à un poste (jamais publiés)
+CLAUDE.local.md
+*.local.md
+private-patterns.txt
+build/eula.txt

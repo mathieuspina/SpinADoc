@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="54 54 148 148" width="148" height="148">
+<defs>
+<linearGradient id="red" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4A4A"/><stop offset="1" stop-color="#9B0F1C"/></linearGradient>
+<linearGradient id="deep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E0272F"/><stop offset="1" stop-color="#5E0710"/></linearGradient>
+</defs>
+<g transform="rotate(-80 128 128)" opacity="0.25"><rect x="88" y="70" width="80" height="116" rx="9" fill="none" stroke="url(#red)" stroke-width="5"/></g>
+<g transform="rotate(-60 128 128)" opacity="0.4"><rect x="88" y="70" width="80" height="116" rx="9" fill="none" stroke="url(#red)" stroke-width="5"/></g>
+<g transform="rotate(-40 128 128)" opacity="0.6"><rect x="88" y="70" width="80" height="116" rx="9" fill="none" stroke="url(#red)" stroke-width="5"/></g>
+<g transform="rotate(-20 128 128)" opacity="0.82"><rect x="88" y="70" width="80" height="116" rx="9" fill="none" stroke="url(#red)" stroke-width="5"/></g>
+<rect x="88" y="70" width="80" height="116" rx="9" fill="url(#deep)"/>
+<path d="M142 70 L168 96 H142 Z" fill="#fff" fill-opacity="0.28"/>
+<rect x="102" y="116" width="52" height="7" rx="3.5" fill="#F5F5F5" fill-opacity="0.92"/>
+<rect x="102" y="134" width="52" height="7" rx="3.5" fill="#F5F5F5" fill-opacity="0.92"/>
+<rect x="102" y="152" width="32" height="7" rx="3.5" fill="#F5F5F5" fill-opacity="0.92"/>
+</svg>

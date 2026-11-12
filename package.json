@@ -1,0 +1,96 @@
+{
+  "name": "spin-a-doc",
+  "version": "0.12.4",
+  "description": "Spin A Doc - viewer et éditeur PDF",
+  "main": "main.js",
+  "author": "SpinASoft",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "postinstall": "node scripts/copy-vendor.js",
+    "start": "electron .",
+    "test": "node test/test-edit.js && node test/test-model.js && node test/test-shapes.js && node test/test-text-replace.js && node test/test-stamps.js && node test/test-measure.js && node test/test-measure-render.js && node test/test-snap.js && node test/test-print.js && node test/test-pages.js && node test/test-merge.js && node test/test-numbering.js && node test/test-docs.js && node test/test-forms.js && node test/test-compare.js && node test/test-ocr.js && node test/test-callout.js && node test/test-redact.js && node test/test-redact-extras.js && node test/test-fields.js && node test/test-outline.js && node test/test-ribbon.js && node test/test-winint.js && node test/test-release.js && node test/test-public.js",
+    "test:ui": "node test/test-ui.js && node test/test-home-ui.js && node test/test-annot-ui.js && node test/test-text-ui.js && node test/test-stamps-ui.js && node test/test-layout-ui.js && node test/test-measure-ui.js && node test/test-pan-ui.js && node test/test-print-ui.js && node test/test-pages-ui.js && node test/test-print-opts-ui.js && node test/test-print-async-ui.js && node test/test-merge-ui.js && node test/test-click-ui.js && node test/test-numbering-ui.js && node test/test-drop-ui.js && node test/test-docs-ui.js && node test/test-forms-ui.js && node test/test-compare-ui.js && node test/test-ocr-ui.js && node test/test-ocr-orient-ui.js && node test/test-callout-ui.js && node test/test-callout-fix-ui.js && node test/test-redact-ui.js && node test/test-props-layout-ui.js && node test/test-redact-guard-ui.js && node test/test-fields-ui.js && node test/test-help-ui.js && node test/test-winint-ui.js && node test/test-ribbon-layout-ui.js",
+    "licences": "node scripts/check-licenses.js",
+    "dist": "node scripts/build-info.js && node scripts/make-eula.js && electron-builder --win nsis portable",
+    "test:packaged": "node scripts/test-packaged.js",
+    "test:update": "node scripts/test-update.js",
+    "checksums": "node scripts/checksums.js",
+    "release-notes": "node scripts/release-notes.js",
+    "test:print": "node test/test-print-real.js"
+  },
+  "dependencies": {
+    "@cantoo/pdf-lib": "^2.3.2",
+    "@fontsource/caveat": "^5.3.0",
+    "@fontsource/dancing-script": "^5.3.0",
+    "@fontsource/homemade-apple": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@tesseract.js-data/eng": "^1.0.0",
+    "@tesseract.js-data/fra": "^1.0.0",
+    "lucide-static": "^1.70.0",
+    "pdfjs-dist": "^4.10.38",
+    "tesseract.js": "^7.0.0",
+    "tesseract.js-core": "^7.0.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "license-checker": "^25.0.1"
+  },
+  "build": {
+    "appId": "com.spinadoc.app",
+    "productName": "Spin A Doc",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "app-info.js",
+      "build-info.json",
+      "preload.js",
+      "print-main.js",
+      "src/**/*",
+      "vendor/**/*",
+      "THIRD_PARTY_LICENSES",
+      "package.json",
+      "build/icon.ico",
+      "!node_modules/**/*"
+    ],
+    "icon": "build/icon.ico",
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "SpinADoc-Setup-${version}.${ext}",
+      "shortcutName": "Spin A Doc",
+      "license": "build/eula.txt"
+    },
+    "portable": {
+      "artifactName": "SpinADoc-Portable-${version}.${ext}"
+    },
+    "copyright": "Copyright © 2026 SpinASoft",
+    "publish": null,
+    "extraResources": [
+      {
+        "from": "EULA.fr.md",
+        "to": "EULA.fr.md"
+      },
+      {
+        "from": "POLITIQUE-CONFIDENTIALITE.md",
+        "to": "POLITIQUE-CONFIDENTIALITE.md"
+      },
+      {
+        "from": "THIRD_PARTY_LICENSES",
+        "to": "THIRD_PARTY_LICENSES.txt"
+      }
+    ]
+  }
+}

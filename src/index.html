@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spin A Doc</title>
+  <link rel="icon" href="assets/logo.svg">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="icons/icons.css">
+</head>
+<body data-anim="full">
+
+  <!-- Barre du haut : marque, onglets du ruban, réglages -->
+  <header id="topbar">
+    <div class="brand">
+      <span id="brand-mark" class="brand-mark">
+        <!-- Marque (variante petite taille : 2 feuilles fantômes), en SVG inline pour animer l'éventail au démarrage -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="54 54 148 148" width="28" height="28" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="hb-red" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4A4A"/><stop offset="1" stop-color="#9B0F1C"/></linearGradient>
+            <linearGradient id="hb-deep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E0272F"/><stop offset="1" stop-color="#5E0710"/></linearGradient>
+          </defs>
+          <g transform="rotate(-60 128 128)" opacity="0.55"><rect class="ghost" data-angle="-60" x="88" y="70" width="80" height="116" rx="10" fill="none" stroke="url(#hb-red)" stroke-width="10"/></g>
+          <g transform="rotate(-30 128 128)" opacity="0.9"><rect class="ghost" data-angle="-30" x="88" y="70" width="80" height="116" rx="10" fill="none" stroke="url(#hb-red)" stroke-width="10"/></g>
+          <g class="top">
+            <rect x="88" y="70" width="80" height="116" rx="10" fill="url(#hb-deep)"/>
+            <path d="M142 70 L168 96 H142 Z" fill="#fff" fill-opacity="0.3"/>
+            <rect x="102" y="112" width="52" height="11" rx="5.5" fill="#F5F5F5"/>
+            <rect x="102" y="132" width="52" height="11" rx="5.5" fill="#F5F5F5"/>
+            <rect x="102" y="152" width="32" height="11" rx="5.5" fill="#F5F5F5"/>
+          </g>
+        </svg>
+      </span>
+      <span class="brand-name">Spin A Doc</span>
+    </div>
+    <div id="ribbon-tabs" role="tablist" aria-label="Ruban">
+      <button role="tab" id="rtab-home" aria-controls="rpanel-home" aria-selected="true" tabindex="0">Accueil</button>
+      <button role="tab" id="rtab-annotate" aria-controls="rpanel-annotate" aria-selected="false" tabindex="-1">Annoter</button>
+      <button role="tab" id="rtab-pages" aria-controls="rpanel-pages" aria-selected="false" tabindex="-1">Pages</button>
+      <button role="tab" id="rtab-measure" aria-controls="rpanel-measure" aria-selected="false" tabindex="-1">Mesure</button>
+      <button role="tab" id="rtab-forms" aria-controls="rpanel-forms" aria-selected="false" tabindex="-1">Formulaire</button>
+      <button role="tab" id="rtab-document" aria-controls="rpanel-document" aria-selected="false" tabindex="-1">Document</button>
+      <button role="tab" id="rtab-view" aria-controls="rpanel-view" aria-selected="false" tabindex="-1">Affichage</button>
+    </div>
+    <button id="btn-help" class="icon-btn" aria-label="Aide (F1)" title="Aide (F1)"><span class="ico" data-icon="circle-help"></span></button>
+    <button id="btn-settings" class="icon-btn" aria-label="Réglages" title="Réglages"><span class="ico" data-icon="settings"></span></button>
+  </header>
+
+  <!-- Panneau du ruban -->
+  <section id="ribbon">
+    <div role="tabpanel" id="rpanel-home" aria-labelledby="rtab-home" class="rpanel">
+      <div class="rgroup" role="group" aria-label="Fichier">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="open" title="Ouvrir un PDF (Ctrl+O)"><span class="ico" data-icon="folder-open"></span><span class="lbl">Ouvrir</span></button>
+          <button class="rbtn big" data-cmd="recents" aria-haspopup="menu" aria-expanded="false" title="Fichiers récents"><span class="ico" data-icon="clock"></span><span class="lbl">Fichiers récents</span></button>
+          <button class="rbtn big" data-cmd="print" title="Imprimer (Ctrl+P)"><span class="ico" data-icon="printer"></span><span class="lbl">Imprimer</span></button>
+          <button class="rbtn big" data-cmd="merge-open" title="Fusionner plusieurs PDF en un seul"><span class="ico" data-icon="files"></span><span class="lbl">Fusionner des PDF</span></button>
+          <button class="rbtn big" data-cmd="saveas" title="Enregistrer sous (Ctrl+S)"><span class="ico" data-icon="save"></span><span class="lbl">Enregistrer sous</span></button>
+        </div>
+        <div class="rgroup-label">Fichier</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Outil">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="tool-select" data-pressable title="Souris : sélectionner du texte, déplacer"><span class="ico" data-icon="mouse-pointer-2"></span><span class="lbl">Souris</span></button>
+        </div>
+        <div class="rgroup-label">Outil</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Recherche">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="search" title="Rechercher (Ctrl+F)"><span class="ico" data-icon="search"></span><span class="lbl">Rechercher</span></button>
+        </div>
+        <div class="rgroup-label">Recherche</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Pages">
+        <div class="rgroup-body stack">
+          <button class="rbtn small" data-cmd="pg-rot-left" title="Pivoter à gauche (Ctrl+Maj+-) : page courante ou pages sélectionnées"><span class="ico" data-icon="rotate-ccw"></span><span class="lbl">Pivoter à gauche</span></button>
+          <button class="rbtn small" data-cmd="pg-rot-right" title="Pivoter à droite (Ctrl+Maj++) : page courante ou pages sélectionnées"><span class="ico" data-icon="rotate-cw"></span><span class="lbl">Pivoter à droite</span></button>
+        </div>
+        <div class="rgroup-label">Pages</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Historique">
+        <div class="rgroup-body stack">
+          <button class="rbtn small" data-cmd="undo" title="Annuler (Ctrl+Z)"><span class="ico" data-icon="undo-2"></span><span class="lbl">Annuler</span></button>
+          <button class="rbtn small" data-cmd="redo" title="Rétablir (Ctrl+Y)"><span class="ico" data-icon="redo-2"></span><span class="lbl">Rétablir</span></button>
+        </div>
+        <div class="rgroup-label">Historique</div>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="rpanel-annotate" aria-labelledby="rtab-annotate" class="rpanel" hidden>
+      <div class="rgroup" role="group" aria-label="Texte">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="tool-select" data-pressable title="Souris : sélectionner, déplacer, texte"><span class="ico" data-icon="mouse-pointer-2"></span><span class="lbl">Sélection</span></button>
+          <button class="rbtn big" data-cmd="tool-add" data-pressable title="Ajouter du texte"><span class="ico" data-icon="type"></span><span class="lbl">Ajouter texte</span></button>
+          <button class="rbtn big" data-cmd="tool-edit" data-pressable title="Modifier le texte existant"><span class="ico" data-icon="text-cursor-input"></span><span class="lbl">Modifier texte</span></button>
+        </div>
+        <div class="rgroup-label">Texte</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Insertion">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="tool-callout" data-pressable title="Légende : cliquer sur le point à annoter, glisser vers l'emplacement du texte, relâcher puis taper le texte"><span class="ico" data-icon="message-square-text"></span><span class="lbl">Légende</span></button>
+          <button class="rbtn big" data-cmd="m-snap" data-pressable title="Aimantation de la pointe de la légende (et des mesures) aux extrémités et intersections des lignes du plan"><span class="ico" data-icon="magnet"></span><span class="lbl">Aimanter</span></button>
+          <button class="rbtn big" data-cmd="tool-note" data-pressable title="Note : petit cartouche texte"><span class="ico" data-icon="sticky-note"></span><span class="lbl">Note</span></button>
+          <button class="rbtn big" data-cmd="stamps-menu" data-pressable aria-haspopup="menu" aria-expanded="false" title="Tampons : prédéfinis et bibliothèque"><span class="ico" data-icon="stamp"></span><span class="lbl">Tampons</span></button>
+          <button class="rbtn big" data-cmd="image-insert" data-pressable title="Insérer une image PNG ou JPEG (glisser-déposer et Ctrl+V fonctionnent aussi)"><span class="ico" data-icon="image"></span><span class="lbl">Image</span></button>
+          <button class="rbtn big" data-cmd="sig-menu" data-pressable aria-haspopup="menu" aria-expanded="false" title="Signatures : bibliothèque et création"><span class="ico" data-icon="signature"></span><span class="lbl">Signature</span></button>
+        </div>
+        <div class="rgroup-label">Insertion</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Formes">
+        <div class="rgroup-body">
+          <div class="rgrid">
+            <button class="rbtn mini" data-cmd="tool-line" data-pressable aria-label="Ligne" title="Ligne"><span class="ico" data-icon="slash"></span></button>
+            <button class="rbtn mini" data-cmd="tool-arrow" data-pressable aria-label="Flèche" title="Flèche"><span class="ico" data-icon="move-up-right"></span></button>
+            <button class="rbtn mini" data-cmd="tool-rect" data-pressable aria-label="Rectangle" title="Rectangle (Maj = carré)"><span class="ico" data-icon="square"></span></button>
+            <button class="rbtn mini" data-cmd="tool-ellipse" data-pressable aria-label="Ellipse" title="Ellipse (Maj = cercle)"><span class="ico" data-icon="circle"></span></button>
+            <button class="rbtn mini" data-cmd="tool-polygon" data-pressable aria-label="Polygone" title="Polygone (clic par sommet, double-clic ou Entrée pour finir)"><span class="ico" data-icon="pentagon"></span></button>
+            <button class="rbtn mini" data-cmd="tool-polyline" data-pressable aria-label="Polyligne" title="Polyligne (clic par sommet, double-clic ou Entrée pour finir)"><span class="ico" data-icon="activity"></span></button>
+            <button class="rbtn mini" data-cmd="tool-cloud" data-pressable aria-label="Nuage de révision" title="Nuage de révision"><span class="ico" data-icon="cloud"></span></button>
+          </div>
+        </div>
+        <div class="rgroup-label">Formes</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Marquage">
+        <div class="rgroup-body">
+          <div class="rgrid">
+            <button class="rbtn mini" data-cmd="tool-highlight" data-pressable aria-label="Surligner" title="Surligner le texte sélectionné"><span class="ico" data-icon="highlighter"></span></button>
+            <button class="rbtn mini" data-cmd="tool-underline" data-pressable aria-label="Souligner" title="Souligner le texte sélectionné"><span class="ico" data-icon="underline"></span></button>
+            <button class="rbtn mini" data-cmd="tool-strike" data-pressable aria-label="Barrer" title="Barrer le texte sélectionné"><span class="ico" data-icon="strikethrough"></span></button>
+            <button class="rbtn mini" data-cmd="tool-hlrect" data-pressable aria-label="Surlignage rectangulaire libre" title="Surlignage rectangulaire libre"><span class="ico" data-icon="brush"></span></button>
+          </div>
+        </div>
+        <div class="rgroup-label">Marquage</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Dessin">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="tool-pen" data-pressable title="Crayon libre"><span class="ico" data-icon="pencil"></span><span class="lbl">Crayon</span></button>
+          <button class="rbtn big" data-cmd="tool-eraser" data-pressable title="Gomme d'objet"><span class="ico" data-icon="eraser"></span><span class="lbl">Gomme</span></button>
+        </div>
+        <div class="rgroup-label">Dessin</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Objets">
+        <div class="rgroup-body">
+          <div class="rgrid">
+            <button class="rbtn mini" data-cmd="obj-copy" aria-label="Copier" title="Copier (Ctrl+C)"><span class="ico" data-icon="copy"></span></button>
+            <button class="rbtn mini" data-cmd="obj-paste" aria-label="Coller" title="Coller (Ctrl+V)"><span class="ico" data-icon="clipboard-paste"></span></button>
+            <button class="rbtn mini" data-cmd="obj-duplicate" aria-label="Dupliquer" title="Dupliquer (Ctrl+D)"><span class="ico" data-icon="copy-plus"></span></button>
+            <button class="rbtn mini" data-cmd="obj-delete" aria-label="Supprimer" title="Supprimer (Suppr)"><span class="ico" data-icon="trash-2"></span></button>
+            <button class="rbtn mini" data-cmd="obj-front" aria-label="Premier plan" title="Premier plan"><span class="ico" data-icon="bring-to-front"></span></button>
+            <button class="rbtn mini" data-cmd="obj-back" aria-label="Arrière-plan" title="Arrière-plan"><span class="ico" data-icon="send-to-back"></span></button>
+            <button class="rbtn mini" data-cmd="props" data-pressable aria-label="Propriétés" title="Panneau de propriétés"><span class="ico" data-icon="sliders-horizontal"></span></button>
+          </div>
+        </div>
+        <div class="rgroup-label">Objets</div>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="rpanel-pages" aria-labelledby="rtab-pages" class="rpanel" hidden>
+      <div class="rgroup" role="group" aria-label="Sélection">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="pg-select-all" title="Sélectionner toutes les pages (Ctrl+A dans les miniatures)"><span class="ico" data-icon="layout-grid"></span><span class="lbl">Tout sélectionner</span></button>
+        </div>
+        <div class="rgroup-label">Sélection</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Pivoter">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="pg-rot-left" title="Pivoter les pages à gauche (la rotation est écrite dans le PDF)"><span class="ico" data-icon="rotate-ccw"></span><span class="lbl">Pivoter à gauche</span></button>
+          <button class="rbtn big" data-cmd="pg-rot-right" title="Pivoter les pages à droite (la rotation est écrite dans le PDF)"><span class="ico" data-icon="rotate-cw"></span><span class="lbl">Pivoter à droite</span></button>
+        </div>
+        <div class="rgroup-label">Pivoter</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Organiser">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="pg-delete" title="Supprimer les pages sélectionnées"><span class="ico" data-icon="trash-2"></span><span class="lbl">Supprimer</span></button>
+          <button class="rbtn big" data-cmd="pg-dup" title="Dupliquer les pages sélectionnées"><span class="ico" data-icon="copy-plus"></span><span class="lbl">Dupliquer</span></button>
+          <button class="rbtn big" data-cmd="pg-extract" title="Extraire les pages sélectionnées vers un nouveau PDF"><span class="ico" data-icon="file-output"></span><span class="lbl">Extraire</span></button>
+        </div>
+        <div class="rgroup-label">Organiser</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Insérer">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="pg-blank" title="Insérer une page vierge (A4, A3, A2 ou identique à la page courante)"><span class="ico" data-icon="file-plus"></span><span class="lbl">Page vierge</span></button>
+          <button class="rbtn big" data-cmd="pg-insert" title="Insérer des pages d'un autre PDF à une position donnée"><span class="ico" data-icon="file-input"></span><span class="lbl">Pages d'un PDF</span></button>
+          <button class="rbtn big" data-cmd="merge-open" title="Fusionner plusieurs PDF en un seul"><span class="ico" data-icon="files"></span><span class="lbl">Fusionner des PDF</span></button>
+        </div>
+        <div class="rgroup-label">Insérer</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Numérotation">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="pg-number" title="Numéroter les pages : une ou plusieurs règles (format, plage, position…)"><span class="ico" data-icon="list-ordered"></span><span class="lbl">Numéroter</span></button>
+          <button class="rbtn big" data-cmd="pg-number-preview" data-pressable aria-pressed="true" title="Afficher ou masquer l'aperçu de la numérotation sur les pages"><span class="ico" data-icon="eye"></span><span class="lbl">Aperçu</span></button>
+        </div>
+        <div class="rgroup-label">Numérotation</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Cadrer et diviser">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="pg-crop" data-pressable title="Recadrer la page courante (ou les pages sélectionnées) : tirer un cadre à la souris"><span class="ico" data-icon="crop"></span><span class="lbl">Recadrer</span></button>
+          <button class="rbtn big" data-cmd="pg-split" title="Diviser le PDF en plusieurs fichiers (plages, tous les N pages, une page par fichier)"><span class="ico" data-icon="split"></span><span class="lbl">Diviser</span></button>
+        </div>
+        <div class="rgroup-label">Cadrer et diviser</div>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="rpanel-document" aria-labelledby="rtab-document" class="rpanel" hidden>
+      <div class="rgroup" role="group" aria-label="Exporter">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="doc-export-images" title="Exporter des pages en images PNG ou JPG (plage et résolution au choix)"><span class="ico" data-icon="file-image"></span><span class="lbl">Pages en images</span></button>
+        </div>
+        <div class="rgroup-label">Exporter</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Document">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="doc-properties" title="Titre, auteur, sujet et mots-clés du document"><span class="ico" data-icon="info"></span><span class="lbl">Propriétés</span></button>
+          <button class="rbtn big" data-cmd="doc-optimize" title="Réenregistrer avec des flux d'objets compressés : taille avant / après"><span class="ico" data-icon="file-down"></span><span class="lbl">Optimiser</span></button>
+          <button class="rbtn big" data-cmd="doc-protect" title="Enregistrer le PDF protégé par un mot de passe"><span class="ico" data-icon="lock"></span><span class="lbl">Protéger</span></button>
+          <button class="rbtn big" data-cmd="rdx-meta" title="Retirer titre, auteur, sujet, mots-clés, créateur, producteur, dates et XMP à l'enregistrement"><span class="ico" data-icon="info"></span><span class="lbl">Nettoyer les métadonnées</span></button>
+        </div>
+        <div class="rgroup-label">Document</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Caviarder">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="tool-redact" data-pressable title="Tracer une zone à caviarder (rectangle hachuré rouge) : modifiable, déplaçable, supprimable et annulable tant que le caviardage n'est pas appliqué"><span class="ico" data-icon="square-minus"></span><span class="lbl">Zone à caviarder</span></button>
+          <button class="rbtn big" data-cmd="rdx-find" title="Rechercher un mot, une expression, des adresses e-mail, téléphones ou IBAN (texte natif et OCR) et marquer les occurrences"><span class="ico" data-icon="search"></span><span class="lbl">Rechercher et caviarder</span></button>
+          <button class="rbtn big" data-cmd="rdx-clear" title="Retirer toutes les zones non appliquées (annulable)"><span class="ico" data-icon="eraser"></span><span class="lbl">Retirer les zones</span></button>
+          <button class="rbtn big" data-cmd="rdx-apply" title="Détruire définitivement l'information sous les zones : les pages concernées sont remplacées par des images où les zones sont peintes"><span class="ico" data-icon="lock"></span><span class="lbl">Appliquer le caviardage</span></button>
+          <button class="rbtn big" data-cmd="rdx-ocr" title="OCR des pages caviardées : reconnaître le texte des pages caviardées pour qu'elles soient de nouveau cherchables"><span class="ico" data-icon="scan-text"></span><span class="lbl">OCR pages caviardées</span></button>
+        </div>
+        <div class="rgroup-label">Caviarder</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Reconnaissance de texte">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="doc-ocr" title="Reconnaître le texte (OCR) des pages scannées ou vectorisées : recherche et copie, 100 % hors ligne"><span class="ico" data-icon="scan-text"></span><span class="lbl">Reconnaître le texte</span></button>
+          <button class="rbtn big" data-cmd="ocr-lowconf" data-pressable aria-pressed="false" title="Surligner les mots reconnus avec peu de certitude"><span class="ico" data-icon="highlighter"></span><span class="lbl">Mots douteux</span></button>
+          <button class="rbtn big" data-cmd="ocr-remove" title="Retirer le texte reconnu des pages sélectionnées (ou de tout le document)"><span class="ico" data-icon="eraser"></span><span class="lbl">Retirer l'OCR</span></button>
+        </div>
+        <div class="rgroup-label">OCR</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Comparer">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="doc-compare" title="Comparer deux documents (ou deux indices d'un plan) : superposition en deux couleurs, fondu, côte à côte, texte"><span class="ico" data-icon="git-compare"></span><span class="lbl">Comparer</span></button>
+        </div>
+        <div class="rgroup-label">Comparer</div>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="rpanel-forms" aria-labelledby="rtab-forms" class="rpanel" hidden>
+      <div class="rgroup" role="group" aria-label="Créer des champs">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="tool-field-text" data-pressable title="Champ texte (une ou plusieurs lignes) : clic = taille par défaut, glisser = tracer le cadre"><span class="ico" data-icon="text-cursor-input"></span><span class="lbl">Champ texte</span></button>
+          <button class="rbtn big" data-cmd="tool-field-check" data-pressable title="Case à cocher : clic ou glisser"><span class="ico" data-icon="square-check"></span><span class="lbl">Case à cocher</span></button>
+          <button class="rbtn big" data-cmd="tool-field-radio" data-pressable title="Boutons radio : chaque clic ajoute une option au groupe courant (« Nouveau groupe » pour en commencer un autre)"><span class="ico" data-icon="circle-dot"></span><span class="lbl">Boutons radio</span></button>
+          <button class="rbtn big" data-cmd="fld-radio-new" title="Le prochain bouton radio commence un nouveau groupe"><span class="ico" data-icon="plus"></span><span class="lbl">Nouveau groupe</span></button>
+          <button class="rbtn big" data-cmd="tool-field-combo" data-pressable title="Liste déroulante (options saisies dans le panneau Propriétés)"><span class="ico" data-icon="chevron-down"></span><span class="lbl">Liste déroulante</span></button>
+          <button class="rbtn big" data-cmd="tool-field-list" data-pressable title="Liste de choix (options saisies dans le panneau Propriétés)"><span class="ico" data-icon="list"></span><span class="lbl">Liste</span></button>
+          <button class="rbtn big" data-cmd="tool-field-date" data-pressable title="Champ de date (texte au format jj/mm/aaaa, sans JavaScript)"><span class="ico" data-icon="calendar"></span><span class="lbl">Date</span></button>
+        </div>
+        <div class="rgroup-label">Créer</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Organiser">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="fld-order" title="Ordre de passage d'un champ à l'autre avec la touche Tab (par défaut : de haut en bas, de gauche à droite)"><span class="ico" data-icon="list-ordered"></span><span class="lbl">Ordre de tabulation</span></button>
+          <div class="rbtn-grid" role="group" aria-label="Aligner">
+            <button class="rbtn mini" data-cmd="al-left" aria-label="Aligner à gauche" title="Aligner à gauche (au moins deux objets sélectionnés)"><span class="ico" data-icon="align-start-vertical"></span></button>
+            <button class="rbtn mini" data-cmd="al-center" aria-label="Centrer horizontalement" title="Centrer horizontalement (au moins deux objets sélectionnés)"><span class="ico" data-icon="align-center-vertical"></span></button>
+            <button class="rbtn mini" data-cmd="al-right" aria-label="Aligner à droite" title="Aligner à droite (au moins deux objets sélectionnés)"><span class="ico" data-icon="align-end-vertical"></span></button>
+            <button class="rbtn mini" data-cmd="al-top" aria-label="Aligner en haut" title="Aligner en haut (au moins deux objets sélectionnés)"><span class="ico" data-icon="align-start-horizontal"></span></button>
+            <button class="rbtn mini" data-cmd="al-middle" aria-label="Centrer verticalement" title="Centrer verticalement (au moins deux objets sélectionnés)"><span class="ico" data-icon="align-center-horizontal"></span></button>
+            <button class="rbtn mini" data-cmd="al-bottom" aria-label="Aligner en bas" title="Aligner en bas (au moins deux objets sélectionnés)"><span class="ico" data-icon="align-end-horizontal"></span></button>
+          </div>
+        </div>
+        <div class="rgroup-label">Organiser</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Tester">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="fld-preview" data-pressable title="Tester le formulaire comme un lecteur (remplir, Tab) sans quitter l'onglet ; cliquer à nouveau pour revenir à la conception"><span class="ico" data-icon="form-input"></span><span class="lbl">Prévisualiser / remplir</span></button>
+          <button class="rbtn big" data-cmd="props" data-pressable title="Panneau Propriétés : nom, infobulle, valeur par défaut, options, obligatoire, lecture seule, aspect"><span class="ico" data-icon="sliders-horizontal"></span><span class="lbl">Propriétés</span></button>
+        </div>
+        <div class="rgroup-label">Tester</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Remplir">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="form-highlight" data-pressable aria-pressed="true" title="Afficher ou masquer la surbrillance des champs de formulaire"><span class="ico" data-icon="highlighter"></span><span class="lbl">Surbrillance</span></button>
+          <button class="rbtn big" data-cmd="form-flatten" data-pressable aria-pressed="false" title="À l'enregistrement, aplatir le formulaire : les champs deviennent du contenu figé"><span class="ico" data-icon="layers"></span><span class="lbl">Aplatir à l'enregistrement</span></button>
+          <button class="rbtn big" data-cmd="form-flatten-now" title="Ouvrir un exemplaire aplati du formulaire rempli dans un nouvel onglet"><span class="ico" data-icon="copy-plus"></span><span class="lbl">Exemplaire aplati</span></button>
+        </div>
+        <div class="rgroup-label">Remplir</div>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="rpanel-measure" aria-labelledby="rtab-measure" class="rpanel" hidden>
+      <div class="rgroup" role="group" aria-label="Mesurer">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="tool-m-dist" data-pressable title="Distance entre deux points (clic, clic). Maj = angle par pas de 15°"><span class="ico" data-icon="ruler"></span><span class="lbl">Distance</span></button>
+
+          <button class="rbtn big" data-cmd="tool-m-poly" data-pressable title="Longueur d'une polyligne (un clic par sommet, double-clic ou Entrée pour finir)"><span class="ico" data-icon="activity"></span><span class="lbl">Polyligne</span></button>
+
+          <button class="rbtn big" data-cmd="tool-m-area" data-pressable title="Surface et périmètre d'un polygone (un clic par sommet, double-clic ou Entrée pour finir)"><span class="ico" data-icon="pentagon"></span><span class="lbl">Surface</span></button>
+
+          <button class="rbtn big" data-cmd="tool-m-angle" data-pressable title="Angle en trois points (extrémité, sommet, extrémité)"><span class="ico" data-icon="triangle-right"></span><span class="lbl">Angle</span></button>
+
+          <button class="rbtn big" data-cmd="tool-m-dim" data-pressable title="Cote avec traits d'attache et flèches (deux points)"><span class="ico" data-icon="ruler-dimension-line"></span><span class="lbl">Cote</span></button>
+
+          <button class="rbtn big" data-cmd="tool-m-circle" data-pressable title="Cercle par trois points : diamètre et rayon"><span class="ico" data-icon="diameter"></span><span class="lbl">Cercle</span></button>
+
+        </div>
+        <div class="rgroup-label">Mesurer</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Échelle">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="m-scale" title="Définir l'échelle de la page (1:N ou par deux points)"><span class="ico" data-icon="scaling"></span><span class="lbl">Échelle</span></button>
+
+          <button class="rbtn big" data-cmd="tool-m-calib" data-pressable title="Calibrer sur une longueur connue : cliquer deux points du plan"><span class="ico" data-icon="crosshair"></span><span class="lbl">Calibrer</span></button>
+
+        </div>
+        <div class="rgroup-label">Échelle</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Affichage des mesures">
+        <div class="rgroup-body">
+          <div class="rform">
+            <label>Unité <select id="m-unit" aria-label="Unité d'affichage"><option value="mm">mm</option><option value="cm">cm</option><option value="m" selected>m</option></select></label>
+            <label>Décimales <select id="m-prec" aria-label="Nombre de décimales"><option>0</option><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+          </div>
+          <button class="rbtn big" data-cmd="m-snap" data-pressable title="Aimantation aux extrémités et intersections des lignes du plan"><span class="ico" data-icon="magnet"></span><span class="lbl">Aimanter</span></button>
+
+          <button class="rbtn big" data-cmd="m-include" data-pressable title="Inclure les mesures dans le PDF enregistré (sinon elles restent à l'écran)"><span class="ico" data-icon="file-down"></span><span class="lbl">Dans le PDF</span></button>
+
+        </div>
+        <div class="rgroup-label">Affichage</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Mesures">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="tool-m-hole" data-pressable title="Soustraire un trou d'une surface : tracer le contour du trou dans la surface"><span class="ico" data-icon="square-minus"></span><span class="lbl">Trou</span></button>
+
+          <button class="rbtn big" data-cmd="m-lock" title="Verrouiller / déverrouiller la valeur de la mesure sélectionnée (elle ne suit plus l'échelle)"><span class="ico" data-icon="lock"></span><span class="lbl">Verrouiller</span></button>
+
+          <button class="rbtn big" data-cmd="m-panel" data-pressable title="Panneau des mesures : liste, totaux et export CSV"><span class="ico" data-icon="table-2"></span><span class="lbl">Tableau</span></button>
+
+          <button class="rbtn big" data-cmd="m-csv" title="Exporter les mesures en CSV (Excel français)"><span class="ico" data-icon="file-down"></span><span class="lbl">Export CSV</span></button>
+
+        </div>
+        <div class="rgroup-label">Mesures</div>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="rpanel-view" aria-labelledby="rtab-view" class="rpanel" hidden>
+      <div class="rgroup" role="group" aria-label="Zoom">
+        <div class="rgroup-body">
+          <div class="stack">
+            <div class="inline">
+              <button class="rbtn small icononly" data-cmd="zoom-out" aria-label="Zoom arrière" title="Zoom arrière (Ctrl+-)"><span class="ico" data-icon="zoom-out"></span></button>
+              <span id="zoom-label-ribbon" class="zoom-label" aria-live="polite">100 %</span>
+              <button class="rbtn small icononly" data-cmd="zoom-in" aria-label="Zoom avant" title="Zoom avant (Ctrl++)"><span class="ico" data-icon="zoom-in"></span></button>
+            </div>
+          </div>
+          <button class="rbtn big" data-cmd="fit-width" data-pressable title="Ajuster à la largeur"><span class="ico" data-icon="unfold-horizontal"></span><span class="lbl">Ajuster largeur</span></button>
+          <button class="rbtn big" data-cmd="fit-page" data-pressable title="Page entière"><span class="ico" data-icon="maximize"></span><span class="lbl">Page entière</span></button>
+        </div>
+        <div class="rgroup-label">Zoom</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Disposition">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="mode-continuous" data-pressable title="Défilement continu"><span class="ico" data-icon="gallery-vertical"></span><span class="lbl">Continu</span></button>
+          <button class="rbtn big" data-cmd="mode-single" data-pressable title="Une page à la fois"><span class="ico" data-icon="file"></span><span class="lbl">Page par page</span></button>
+          <button class="rbtn big" data-cmd="spread" data-pressable title="Pages côte à côte"><span class="ico" data-icon="columns-2"></span><span class="lbl">Côte à côte</span></button>
+        </div>
+        <div class="rgroup-label">Disposition</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Rotation de l'affichage">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="rotate-right" title="Pivoter l'affichage vers la droite"><span class="ico" data-icon="rotate-cw"></span><span class="lbl">Affichage à droite</span></button>
+          <button class="rbtn big" data-cmd="rotate-left" title="Pivoter l'affichage vers la gauche"><span class="ico" data-icon="rotate-ccw"></span><span class="lbl">Affichage à gauche</span></button>
+        </div>
+        <div class="rgroup-label">Rotation</div>
+      </div>
+      <div class="rgroup" role="group" aria-label="Fenêtre">
+        <div class="rgroup-body">
+          <button class="rbtn big" data-cmd="fullscreen" title="Plein écran (F11)"><span class="ico" data-icon="fullscreen"></span><span class="lbl">Plein écran</span></button>
+          <button class="rbtn big" data-cmd="sidebar" data-pressable title="Panneau latéral (F4)"><span class="ico" data-icon="panel-left"></span><span class="lbl">Panneau latéral</span></button>
+        </div>
+        <div class="rgroup-label">Fenêtre</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Onglets de documents -->
+  <div id="doctabs-bar">
+    <div id="doctabs" role="tablist" aria-label="Documents ouverts"></div>
+    <button id="btn-newtab" class="icon-btn" aria-label="Ouvrir un PDF" title="Ouvrir un PDF (Ctrl+O)"><span class="ico" data-icon="plus"></span></button>
+  </div>
+
+  <div id="workspace">
+    <!-- Panneau latéral -->
+    <aside id="sidebar" aria-label="Panneau latéral" hidden>
+      <div id="sb-tabs" role="tablist" aria-label="Panneau latéral">
+        <button role="tab" id="sbtab-thumbs" aria-controls="sb-thumbs" aria-selected="true" tabindex="0" title="Miniatures"><span class="ico" data-icon="layout-grid"></span><span class="sr">Miniatures</span></button>
+        <button role="tab" id="sbtab-outline" aria-controls="sb-outline" aria-selected="false" tabindex="-1" title="Signets"><span class="ico" data-icon="bookmark"></span><span class="sr">Signets</span></button>
+        <button role="tab" id="sbtab-search" aria-controls="sb-search" aria-selected="false" tabindex="-1" title="Recherche"><span class="ico" data-icon="search"></span><span class="sr">Recherche</span></button>
+        <button role="tab" id="sbtab-annots" aria-controls="sb-annots" aria-selected="false" tabindex="-1" title="Annotations"><span class="ico" data-icon="message-square-text"></span><span class="sr">Annotations</span></button>
+        <button role="tab" id="sbtab-measures" aria-controls="sb-measures" aria-selected="false" tabindex="-1" title="Mesures"><span class="ico" data-icon="ruler"></span><span class="sr">Mesures</span></button>
+        <button id="sb-pin" class="icon-btn pin-btn" aria-pressed="false" aria-label="Épingler le panneau" title="Épingler : le panneau repousse le document au lieu de le recouvrir"><span class="ico" data-icon="pin"></span></button>
+      </div>
+      <div role="tabpanel" id="sb-thumbs" aria-labelledby="sbtab-thumbs" class="sb-pane"></div>
+      <div role="tabpanel" id="sb-outline" aria-labelledby="sbtab-outline" class="sb-pane" hidden></div>
+      <div role="tabpanel" id="sb-measures" aria-labelledby="sbtab-measures" class="sb-pane" hidden></div>
+      <div role="tabpanel" id="sb-annots" aria-labelledby="sbtab-annots" class="sb-pane" hidden></div>
+      <div role="tabpanel" id="sb-search" aria-labelledby="sbtab-search" class="sb-pane" hidden>
+        <div class="search-box">
+          <input id="search-input" type="search" placeholder="Rechercher dans le document" aria-label="Rechercher dans le document" autocomplete="off">
+          <button id="search-prev" class="icon-btn" aria-label="Résultat précédent" title="Précédent (Maj+Entrée)"><span class="ico" data-icon="chevron-up"></span></button>
+          <button id="search-next" class="icon-btn" aria-label="Résultat suivant" title="Suivant (Entrée)"><span class="ico" data-icon="chevron-down"></span></button>
+        </div>
+        <div id="search-status" class="muted" aria-live="polite"></div>
+        <div id="search-results"></div>
+      </div>
+    </aside>
+
+    <button id="sb-corner" class="icon-btn" type="button" aria-pressed="false" aria-label="Panneau latéral" title="Panneau latéral (F4)"><span class="ico" data-icon="panel-left"></span></button>
+
+    <main id="stage">
+      <!-- Écran d'accueil -->
+      <div id="welcome">
+        <img id="welcome-bg" class="welcome-bg" src="assets/logo-mark.svg" alt="">
+        <div class="welcome-card">
+          <img src="assets/logo.svg" alt="" width="96" height="96">
+          <h1>Spin A Doc</h1>
+          <p class="muted">Lisez, annotez et modifiez vos PDF, hors ligne.</p>
+          <button id="welcome-open" class="primary"><span class="ico" data-icon="folder-open"></span>Ouvrir un PDF</button>
+          <p class="muted small">ou glissez un fichier ici — <kbd>Ctrl</kbd>+<kbd>O</kbd></p>
+          <div id="welcome-recents" hidden>
+            <div class="welcome-recents-head"><h2>Fichiers récents</h2><button id="recents-clear" class="link"><span class="ico" data-icon="trash-2"></span>Vider la liste</button></div>
+            <ul id="recents-list"></ul>
+          </div>
+        </div>
+      </div>
+      <div id="docs"></div>
+    </main>
+
+    <!-- Panneau de propriétés (objet sélectionné ou outil actif) -->
+    <aside id="props" aria-label="Propriétés" hidden>
+      <div id="props-resize" class="props-resize" role="separator" aria-orientation="vertical" aria-label="Largeur du panneau" tabindex="0" title="Glisser pour élargir ou réduire le panneau (flèches gauche / droite au clavier) ; double-clic : largeur par défaut"></div>
+      <div class="props-head">
+        <h2 id="props-title">Propriétés</h2>
+        <button id="props-pin" class="icon-btn pin-btn" aria-pressed="false" aria-label="Épingler le panneau" title="Épingler : le panneau repousse le document au lieu de le recouvrir"><span class="ico" data-icon="pin"></span></button>
+      </div>
+      <div id="props-body"></div>
+    </aside>
+  </div>
+
+  <!-- Barre d'état -->
+  <footer id="statusbar">
+    <button id="sb-toggle" class="icon-btn" aria-label="Panneau latéral" title="Panneau latéral (F4)"><span class="ico" data-icon="panel-left"></span></button>
+    <button id="props-toggle" class="icon-btn" aria-label="Panneau de propriétés" aria-pressed="false" title="Propriétés : s'ouvre seul à la sélection d'un objet ou au choix d'un outil"><span class="ico" data-icon="sliders-horizontal"></span></button>
+    <div class="pager">
+      <button id="page-prev" class="icon-btn" aria-label="Page précédente" title="Page précédente"><span class="ico" data-icon="chevron-left"></span></button>
+      <span>Page <input id="in-page" type="number" min="1" value="1" aria-label="Numéro de page" disabled> / <span id="page-count">0</span></span>
+      <button id="page-next" class="icon-btn" aria-label="Page suivante" title="Page suivante"><span class="ico" data-icon="chevron-right"></span></button>
+    </div>
+    <span id="tool-label" class="tool-label" title="Outil actif (Échap pour revenir à la sélection)"></span>
+    <span id="snap-busy" class="snap-busy" role="status" aria-live="polite" hidden>Analyse du plan en cours…</span>
+    <button id="scale-label" class="link" title="Échelle de la page : cliquer pour la définir" disabled></button>
+    <div class="spacer"></div>
+    <div class="zoomer">
+      <button id="zoom-out" class="icon-btn" aria-label="Zoom arrière"><span class="ico" data-icon="minus"></span></button>
+      <input id="zoom-range" type="range" min="25" max="500" step="5" value="100" aria-label="Zoom">
+      <button id="zoom-in" class="icon-btn" aria-label="Zoom avant"><span class="ico" data-icon="plus"></span></button>
+      <span id="zoom-label" class="zoom-label">100 %</span>
+    </div>
+  </footer>
+
+  <!-- Menu des fichiers récents (ruban) -->
+  <div id="recents-menu" class="menu" role="menu" hidden></div>
+  <div id="lib-menu" class="menu lib-menu" role="menu" hidden></div>
+
+  <!-- Indicateur de chargement : la page du logo qui tourne -->
+  <div id="busy" hidden role="status" aria-live="polite">
+    <img class="spinner" src="assets/logo-mark.svg" alt="" width="60" height="60">
+    <span id="busy-label">Chargement…</span>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <!-- File d'impression : notifications non bloquantes -->
+  <div id="printq" aria-live="polite"></div>
+
+  <!-- Modifications non enregistrées -->
+  <div id="unsaved" class="overlay-dialog" hidden>
+    <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="unsaved-title" aria-describedby="unsaved-msg">
+      <h2 id="unsaved-title">Enregistrer les modifications ?</h2>
+      <p id="unsaved-msg"></p>
+      <ul id="unsaved-list" hidden></ul>
+      <div class="dialog-actions">
+        <button id="unsaved-cancel" class="secondary">Annuler</button>
+        <button id="unsaved-discard" class="secondary">Ne pas enregistrer</button>
+        <button id="unsaved-save" class="primary">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Échelle de mesure -->
+  <div id="mcdlg" class="overlay-dialog" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="mcdlg-title">
+      <h2 id="mcdlg-title">Échelle de la page</h2>
+      <div class="seg" role="tablist" aria-label="Mode">
+        <button type="button" role="tab" id="mc-tab-ratio" aria-selected="true">Échelle connue</button>
+        <button type="button" role="tab" id="mc-tab-pts" aria-selected="false">Deux points</button>
+      </div>
+      <div id="mc-ratio" class="form-grid">
+        <label for="mc-preset">Échelle 1 :</label><select id="mc-preset"></select>
+        <label for="mc-custom">Autre valeur 1 :</label><input id="mc-custom" type="number" min="0.01" step="any" disabled>
+      </div>
+      <div id="mc-pts" class="form-grid" hidden>
+        <label>Distance tracée</label><span id="mc-picked" class="muted"></span>
+        <label for="mc-len">Longueur réelle</label><div><input id="mc-len" type="number" min="0" step="any"> <select id="mc-unit" aria-label="Unité"><option value="mm">mm</option><option value="cm">cm</option><option value="m" selected>m</option></select></div>
+        <label></label><button type="button" id="mc-draw" class="secondary">Tracer deux points sur le plan…</button>
+      </div>
+      <div class="form-grid"><label for="mc-all">Toutes les pages</label><input id="mc-all" type="checkbox"></div>
+      <p id="mc-note" class="muted small"></p>
+      <div class="dialog-actions"><button id="mc-clear" class="secondary">Supprimer l'échelle</button><button id="mc-cancel" class="secondary">Annuler</button><button id="mc-ok" class="primary">Valider</button></div>
+    </div>
+  </div>
+
+  <!-- Impression -->
+  <div id="printdlg" class="overlay-dialog" hidden>
+    <div class="dialog print-dialog" role="dialog" aria-modal="true" aria-labelledby="printdlg-title">
+      <h2 id="printdlg-title">Imprimer</h2>
+      <div class="print-body">
+        <div class="print-form">
+          <fieldset><legend>Imprimante</legend><div class="form-grid">
+          <label for="pr-printer">Imprimante</label><select id="pr-printer"></select>
+          <label></label><div><button type="button" id="pr-props" class="secondary">Propriétés de l'imprimante…</button></div>
+          <label for="pr-copies">Copies</label><div><input id="pr-copies" type="number" min="1" max="99" value="1"> <label class="chk"><input type="checkbox" id="pr-collate" checked> Assembler</label></div>
+          <label for="pr-duplex">Recto-verso</label><select id="pr-duplex"><option value="simplex" selected>Non</option><option value="longEdge">Bord long</option><option value="shortEdge">Bord court</option></select>
+          </div></fieldset>
+          <fieldset><legend>Pages</legend><div class="form-grid">
+          <label>Pages à imprimer</label><div class="print-pages">
+            <label class="radio"><input type="radio" name="pr-pages" value="all" checked> Toutes</label>
+            <label class="radio"><input type="radio" name="pr-pages" value="current"> Page courante</label>
+            <label class="radio"><input type="radio" name="pr-pages" value="selected"> Pages sélectionnées (<span id="pr-sel-n">0</span>)</label>
+            <label class="radio"><input type="radio" name="pr-pages" value="range"> Plage <input id="pr-range" type="text" placeholder="1-3, 5, 8-12" aria-label="Plage de pages"></label>
+          </div>
+          <label for="pr-nup">Pages par feuille</label><select id="pr-nup"><option value="1" selected>1</option><option value="2">2</option><option value="4">4</option></select>
+          </div></fieldset>
+          <fieldset><legend>Papier et échelle</legend><div class="form-grid">
+          <label for="pr-paper">Papier</label><select id="pr-paper"></select>
+          <label for="pr-orient">Orientation</label><select id="pr-orient"><option value="auto" selected>Automatique (selon la page)</option><option value="portrait">Portrait</option><option value="landscape">Paysage</option></select>
+          <label for="pr-scale">Échelle</label><div><select id="pr-scale"><option value="fit" selected>Ajuster à la page imprimable</option><option value="shrink">Réduire les pages trop grandes seulement</option><option value="actual">Taille réelle (100 %)</option><option value="percent">Pourcentage</option></select> <input id="pr-percent" type="number" min="1" max="1000" value="100" aria-label="Pourcentage"> %</div>
+          <label for="pr-margin">Marges (mm)</label><div><input id="pr-margin" type="number" min="0" max="100" step="0.5" value="2" aria-describedby="pr-hardinfo"> <label class="chk"><input type="checkbox" id="pr-center" checked> Centrer</label></div>
+          </div></fieldset>
+          <fieldset><legend>Rendu</legend><div class="form-grid">
+          <label for="pr-color">Couleur</label><select id="pr-color"><option value="color" selected>Couleur</option><option value="gray">Niveaux de gris</option><option value="bw">Noir et blanc</option></select>
+          <label for="pr-thin">Traits fins (mm)</label><div><input id="pr-thin" type="number" min="0" max="2" step="0.05" value="0"> <span class="muted small">0 = inchangés ; renforce les lignes plus fines</span></div>
+          <label for="pr-dpi">Qualité</label><select id="pr-dpi"><option value="150">150 dpi</option><option value="300">300 dpi</option><option value="600" selected>600 dpi (plans)</option></select>
+          <label for="pr-annots">Contenu</label><div><label class="chk"><input type="checkbox" id="pr-annots" checked> Annotations et modifications</label> <label class="chk"><input type="checkbox" id="pr-meas" checked> Mesures</label></div>
+          </div><p id="pr-rnote" class="muted small"></p><p id="pr-cnote" class="muted small"></p></fieldset>
+        </div>
+        <div class="print-side">
+          <div id="pr-preview" class="print-preview checker"><canvas id="pr-canvas"></canvas><div id="pr-area" class="print-area"></div><div id="pr-hard" class="print-hard" hidden></div></div>
+          <div class="print-nav"><button type="button" id="pr-prev" class="icon-btn" aria-label="Feuille précédente"><span class="ico" data-icon="chevron-left"></span></button> <span id="pr-sheet">–</span> <button type="button" id="pr-next" class="icon-btn" aria-label="Feuille suivante"><span class="ico" data-icon="chevron-right"></span></button></div>
+          <p id="pr-info" class="small"></p>
+          <p id="pr-warn" class="small print-warn" role="status"></p>
+        </div>
+      </div>
+      <div class="dialog-actions"><button id="pr-cancel" class="secondary">Annuler</button><button id="pr-winprint" class="secondary" title="Ouvre la boîte d'impression de Windows pour régler le pilote">Boîte Windows…</button><button id="pr-ok" class="primary">Imprimer</button></div>
+    </div>
+  </div>
+
+  <!-- Espace de fusion (plein écran) -->
+  <section id="mergews" class="mergews" hidden aria-label="Fusion de PDF">
+    <header class="mw-head">
+      <h2>Fusionner des PDF</h2>
+      <span id="mw-summary" class="muted small"></span>
+      <div class="mw-actions">
+        <button id="mw-add" type="button" class="secondary">Ajouter des PDF…</button>
+        <button id="mw-tabs" type="button" class="secondary" aria-haspopup="menu">Depuis les onglets…</button>
+        <button id="mw-cancel" type="button" class="secondary">Annuler</button>
+        <button id="mw-go" type="button" class="primary" disabled>Fusionner</button>
+      </div>
+    </header>
+    <div id="mw-body" class="mw-body">
+      <div id="mw-cards" class="mw-cards"></div>
+      <div id="mw-empty" class="mw-empty"><span class="ico" data-icon="files"></span><strong>Déposez des PDF ici</strong><span>ou utilisez « Ajouter des PDF… » : les fichiers deviennent des cartes que vous pouvez réordonner, découper par plages et pivoter.</span></div>
+    </div>
+    <div id="mw-stage" class="mw-stage" hidden aria-hidden="true"></div>
+    <div id="mw-menu" class="menu" role="menu" hidden></div>
+  </section>
+
+  <!-- Comparaison de deux documents (plein écran, lecture seule) -->
+  <section id="cmpws" class="cmpws" hidden aria-label="Comparaison de deux documents">
+    <header class="cmp-head">
+      <h2>Comparer</h2>
+      <label class="cmp-doc"><span class="cmp-dot old"></span>Ancien <select id="cmp-doc-a" aria-label="Document ancien"></select></label>
+      <label class="cmp-doc"><span class="cmp-dot new"></span>Nouveau <select id="cmp-doc-b" aria-label="Document nouveau"></select></label>
+      <div class="cmp-actions">
+        <button id="cmp-export" type="button" class="secondary" disabled title="Une page par page comparée : superposition colorée, zones numérotées et légende">Enregistrer la comparaison en PDF…</button>
+        <button id="cmp-close" type="button" class="secondary">Fermer</button>
+      </div>
+    </header>
+    <div class="cmp-bar" role="toolbar" aria-label="Réglages de la comparaison">
+      <div class="cmp-grp" role="group" aria-label="Affichage">
+        <button id="cmp-m-overlay" type="button" class="secondary cmp-mode" data-mode="overlay" aria-pressed="true" title="Ancien en rouge, nouveau en bleu, inchangé en gris">Superposition</button>
+        <button id="cmp-m-fade" type="button" class="secondary cmp-mode" data-mode="fade" aria-pressed="false" title="Passer de l'ancien au nouveau avec un curseur">Fondu</button>
+        <button id="cmp-m-side" type="button" class="secondary cmp-mode" data-mode="side" aria-pressed="false" title="Deux fenêtres, zoom et défilement synchronisés">Côte à côte</button>
+        <button id="cmp-m-text" type="button" class="secondary cmp-mode" data-mode="text" aria-pressed="false" title="Comparer les textes : ajouts en vert, suppressions en rouge">Texte</button>
+      </div>
+      <div class="cmp-grp" id="cmp-colors" role="group" aria-label="Couleurs de la superposition">
+        <label class="cmp-col">Ancien <input id="cmp-c-old" type="color" value="#e0272f"></label>
+        <label class="cmp-col">Nouveau <input id="cmp-c-new" type="color" value="#1f6feb"></label>
+        <label class="cmp-col">Inchangé <input id="cmp-c-same" type="color" value="#9a9aa2"></label>
+      </div>
+      <div class="cmp-grp" id="cmp-fadebox" role="group" aria-label="Fondu" hidden>
+        <label class="cmp-col">Ancien <input id="cmp-fade" type="range" min="0" max="100" value="100" aria-label="Fondu de l'ancien (gauche) au nouveau (droite)"> Nouveau</label>
+        <button id="cmp-blink" type="button" class="secondary" aria-pressed="false" title="Alterne l'ancien et le nouveau">Clignoter</button>
+      </div>
+      <div class="cmp-grp" role="group" aria-label="Détection">
+        <label class="cmp-col" title="Écart ignoré (micro-décalages, antialiasing)">Tolérance <input id="cmp-tol" type="number" min="0" max="10" step="0.1" value="0.5"> mm</label>
+        <label class="cmp-col" title="Plus fin = plus précis, plus lent et plus lourd en mémoire">Résolution <select id="cmp-res"><option value="2048">Rapide (2048 px)</option><option value="4096" selected>Standard (4096 px)</option><option value="6144">Fine (6144 px)</option></select></label>
+      </div>
+      <div class="cmp-grp" id="cmp-shift" role="group" aria-label="Décalage du nouveau document">
+        <button id="cmp-sh-l" type="button" class="icon-btn" title="Décaler le nouveau vers la gauche" aria-label="Décaler vers la gauche"><span class="ico" data-icon="arrow-left"></span></button>
+        <button id="cmp-sh-r" type="button" class="icon-btn" title="Décaler le nouveau vers la droite" aria-label="Décaler vers la droite"><span class="ico" data-icon="arrow-right"></span></button>
+        <button id="cmp-sh-u" type="button" class="icon-btn" title="Décaler le nouveau vers le haut" aria-label="Décaler vers le haut"><span class="ico" data-icon="arrow-up"></span></button>
+        <button id="cmp-sh-d" type="button" class="icon-btn" title="Décaler le nouveau vers le bas" aria-label="Décaler vers le bas"><span class="ico" data-icon="arrow-down"></span></button>
+        <label class="cmp-col">X <input id="cmp-dx" type="number" step="0.1" value="0" aria-label="Décalage horizontal en mm"></label>
+        <label class="cmp-col">Y <input id="cmp-dy" type="number" step="0.1" value="0" aria-label="Décalage vertical en mm"></label>
+        <span class="muted small">mm</span>
+        <label class="cmp-col">Pas <input id="cmp-step" type="number" min="0.1" step="0.5" value="1" aria-label="Pas du décalage en mm"></label>
+        <button id="cmp-auto" type="button" class="secondary" title="Recalculer l'alignement automatique">Auto</button>
+        <button id="cmp-zero" type="button" class="secondary" title="Aucun décalage">Zéro</button>
+      </div>
+      <div class="cmp-grp" role="group" aria-label="Navigation et zoom">
+        <button id="cmp-prev" type="button" class="secondary" disabled title="Différence précédente">◀ Précédente</button>
+        <button id="cmp-next" type="button" class="secondary" disabled title="Différence suivante">Suivante ▶</button>
+        <span id="cmp-count" class="cmp-count" aria-live="polite"></span>
+        <button id="cmp-zout" type="button" class="icon-btn" title="Zoom arrière" aria-label="Zoom arrière"><span class="ico" data-icon="zoom-out"></span></button>
+        <button id="cmp-zin" type="button" class="icon-btn" title="Zoom avant" aria-label="Zoom avant"><span class="ico" data-icon="zoom-in"></span></button>
+        <button id="cmp-fit" type="button" class="secondary" title="Ajuster à la fenêtre">Ajuster</button>
+        <span id="cmp-zoomval" class="muted small"></span>
+      </div>
+    </div>
+    <div id="cmp-progress" class="cmp-progress" hidden role="status">
+      <span id="cmp-prog-label"></span>
+      <div class="pq-bar"><i></i></div>
+      <button id="cmp-cancel" type="button" class="secondary">Annuler</button>
+    </div>
+    <div class="cmp-body">
+      <aside class="cmp-col-pages" aria-label="Pages à comparer">
+        <h3>Pages</h3>
+        <ul id="cmp-pages" class="cmp-pages"></ul>
+        <div class="cmp-pages-btns">
+          <button id="cmp-add-pair" type="button" class="secondary" title="Ajouter une correspondance de pages">Ajouter une paire</button>
+          <button id="cmp-all" type="button" class="secondary" title="Calcule le pourcentage de changement de chaque paire">Calculer tout</button>
+        </div>
+      </aside>
+      <div class="cmp-view" id="cmp-view">
+        <div id="cmp-pane-a" class="cmp-pane" tabindex="0" aria-label="Page comparée"></div>
+        <div id="cmp-pane-b" class="cmp-pane" tabindex="0" aria-label="Page du nouveau document" hidden></div>
+        <div id="cmp-msg" class="cmp-msg" hidden></div>
+      </div>
+      <aside class="cmp-col-list" aria-label="Différences">
+        <div id="cmp-info" class="cmp-info small"></div>
+        <ul id="cmp-list" class="cmp-list"></ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Pages : boîte de dialogue générique (champs construits par pages-ui.js) -->
+  <div id="pgdlg" class="overlay-dialog" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="pgdlg-title">
+      <h2 id="pgdlg-title"></h2>
+      <p id="pgdlg-intro" class="muted small"></p>
+      <div id="pgdlg-body" class="form-grid"></div>
+      <p id="pgdlg-err" class="print-warn small" role="alert"></p>
+      <div class="dialog-actions"><button id="pgdlg-cancel" type="button" class="secondary">Annuler</button><button id="pgdlg-ok" type="button" class="primary">OK</button></div>
+    </div>
+  </div>
+
+  <!-- Numérotation des pages -->
+  <div id="numdlg" class="overlay-dialog" hidden>
+    <div class="dialog num-dialog" role="dialog" aria-modal="true" aria-labelledby="numdlg-title">
+      <h2 id="numdlg-title">Numéroter les pages</h2>
+      <div class="num-body">
+        <div class="num-listcol">
+          <ul id="num-list" class="num-list" aria-label="Règles de numérotation"></ul>
+          <div class="num-listbtns">
+            <button id="num-add" type="button" class="secondary">Ajouter</button>
+            <button id="num-dup" type="button" class="secondary">Dupliquer</button>
+            <button id="num-del" type="button" class="secondary">Supprimer</button>
+          </div>
+        </div>
+        <div id="num-form" class="num-form">
+          <fieldset><legend>Pages concernées</legend><div class="form-grid">
+            <label for="num-scope">Pages</label>
+            <select id="num-scope"><option value="all">Toutes les pages</option><option value="from">De la page X jusqu'à la fin</option><option value="range">De la page X à la page Y</option></select>
+            <label for="num-from">Page X</label><input id="num-from" type="number" min="1" step="1">
+            <label for="num-to">Page Y</label><input id="num-to" type="number" min="1" step="1">
+            <label for="num-parity">Parité</label>
+            <select id="num-parity"><option value="all">Toutes</option><option value="odd">Pages impaires seulement</option><option value="even">Pages paires seulement</option></select>
+            <label for="num-skip">Sauf la première page</label><input id="num-skip" type="checkbox">
+          </div></fieldset>
+          <fieldset><legend>Numéro et texte</legend><div class="form-grid">
+            <label for="num-start">Numéro de départ</label><input id="num-start" type="number" step="1">
+            <label for="num-format">Format</label><select id="num-format"></select>
+            <label for="num-text">Texte</label><input id="num-text" type="text" maxlength="80" placeholder="Page {n} / {total}">
+            <span></span><span class="muted small">{n} numéro · {total} nombre de pages · {page} position dans le document</span>
+            <label for="num-total">{total} compte</label>
+            <select id="num-total"><option value="rule">Les pages concernées</option><option value="doc">Les pages du document</option></select>
+          </div></fieldset>
+          <fieldset><legend>Apparence et position</legend><div class="form-grid">
+            <label for="num-font">Police</label>
+            <div class="num-inline"><select id="num-font"><option>Helvetica</option><option>Times</option><option>Courier</option></select>
+              <label class="radio"><input id="num-bold" type="checkbox"> Gras</label><label class="radio"><input id="num-italic" type="checkbox"> Italique</label></div>
+            <label for="num-size">Taille (pt)</label><input id="num-size" type="number" min="4" max="72" step="0.5">
+            <label for="num-color">Couleur</label><input id="num-color" type="color">
+            <label for="num-opacity">Opacité</label><input id="num-opacity" type="range" min="0.1" max="1" step="0.05">
+            <label for="num-pos">Position</label><select id="num-pos"></select>
+            <label for="num-mx">Marge horizontale (mm)</label><input id="num-mx" type="number" min="0" max="200" step="1">
+            <label for="num-my">Marge verticale (mm)</label><input id="num-my" type="number" min="0" max="200" step="1">
+            <label for="num-mirror">Miroir recto-verso</label><input id="num-mirror" type="checkbox" title="Les pages paires (versos) placent le numéro du côté opposé">
+          </div></fieldset>
+        </div>
+        <div class="num-prev">
+          <div class="num-prevhead"><label for="num-ppage">Aperçu : page</label><input id="num-ppage" type="number" min="1" step="1"></div>
+          <div id="num-frame" class="num-frame"><canvas id="num-canvas"></canvas><svg id="num-svg" class="num-svg"></svg></div>
+          <p id="num-note" class="muted small"></p>
+        </div>
+      </div>
+      <p class="muted small">La numérotation est écrite dans le PDF à l'enregistrement et à l'impression, comme contenu figé. Rouvert, le fichier contient déjà les numéros : une nouvelle règle s'ajouterait par-dessus.</p>
+      <div class="dialog-actions">
+        <label class="radio num-showall"><input id="num-showall" type="checkbox" checked> Aperçu sur toutes les pages</label>
+        <button id="num-cancel" type="button" class="secondary">Annuler</button>
+        <button id="num-ok" type="button" class="primary">Appliquer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pages : menu contextuel des miniatures -->
+  <div id="pgmenu" class="menu" role="menu" hidden></div>
+
+  <!-- Pages : barre de recadrage (cadre tiré à la souris sur la page) -->
+  <div id="cropbar" role="toolbar" aria-label="Recadrage" hidden>
+    <span id="crop-info">Tirez un cadre sur la page</span>
+    <button id="crop-reset" type="button" class="secondary" title="Retire le recadrage des pages concernées">Retirer le recadrage</button>
+    <button id="crop-cancel" type="button" class="secondary">Annuler</button>
+    <button id="crop-ok" type="button" class="primary" disabled>Appliquer</button>
+  </div>
+
+  <!-- Choix générique -->
+  <div id="choice" class="overlay-dialog" hidden>
+    <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="choice-title" aria-describedby="choice-msg">
+      <h2 id="choice-title"></h2>
+      <p id="choice-msg"></p>
+      <div id="choice-actions" class="dialog-actions"></div>
+    </div>
+  </div>
+
+  <!-- Rechercher et caviarder (panneau flottant) -->
+  <div id="rdx-find" class="rdx-panel" role="dialog" aria-labelledby="rdx-find-title" hidden>
+    <div class="rdx-head"><h2 id="rdx-find-title">Rechercher et caviarder</h2><button id="rdx-close" class="icon-btn" type="button" aria-label="Fermer" title="Fermer (Échap)"><span class="ico" data-icon="x"></span></button></div>
+    <div class="rdx-form">
+      <select id="rdx-kind" aria-label="Type de recherche"><option value="text">Mot ou expression</option><option value="email">Adresses e-mail</option><option value="phone">Numéros de téléphone</option><option value="iban">IBAN</option></select>
+      <select id="rdx-scope" aria-label="Pages"><option value="all">Tout le document</option><option value="current">Page courante</option></select>
+      <input id="rdx-q" type="search" placeholder="Mot ou expression à caviarder" aria-label="Texte à rechercher">
+      <button id="rdx-search" type="button" class="primary">Rechercher</button>
+    </div>
+    <p id="rdx-status" class="muted small" role="status" aria-live="polite"></p>
+    <div id="rdx-list" class="rdx-list"></div>
+    <div class="rdx-actions"><button id="rdx-all" type="button" class="secondary">Tout cocher</button><button id="rdx-none" type="button" class="secondary">Tout décocher</button><button id="rdx-mark" type="button" class="primary" disabled>Marquer</button></div>
+    <p class="muted small rdx-foot">Les occurrences cochées deviennent des zones à caviarder : rien n'est détruit avant « Appliquer le caviardage ».</p>
+  </div>
+
+  <!-- Appliquer le caviardage -->
+  <div id="rdx-apply" class="overlay-dialog" hidden>
+    <div class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="rdx-apply-title">
+      <h2 id="rdx-apply-title">Appliquer le caviardage</h2>
+      <p class="rdx-warn" role="alert"><strong>Opération destructive.</strong> L'information sous les zones est détruite : chaque page concernée est remplacée par une image (à la résolution choisie) où les zones sont peintes. Le texte, les tracés, les images, les annotations et les champs de formulaire de ces pages n'existeront plus dans le fichier enregistré. Seul « Annuler » (Ctrl+Z), avant d'enregistrer, permet de revenir en arrière.</p>
+      <p id="rdx-apply-summary" class="small"></p>
+      <p class="muted small">Conséquences : sur ces pages, texte non sélectionnable ni cherchable (l'OCR est proposé ensuite) et fichier plus lourd. Les autres pages restent intactes et vectorielles. Les signets et les liens vers les pages caviardées sont retirés. Pensez aussi à « Nettoyer les métadonnées ».</p>
+      <div class="form-grid">
+        <label for="rdx-color">Couleur des blocs</label><input id="rdx-color" type="color" value="#000000">
+        <label for="rdx-label">Libellé (facultatif)</label><input id="rdx-label" type="text" maxlength="40" placeholder="ex. CAVIARDÉ">
+        <label for="rdx-dpi">Résolution</label><select id="rdx-dpi"><option value="150">150 dpi (léger)</option><option value="200">200 dpi</option><option value="300" selected>300 dpi (recommandé)</option><option value="400">400 dpi</option><option value="600">600 dpi (fin, lourd)</option></select>
+        <span></span><span id="rdx-dpi-hint" class="muted small"></span>
+      </div>
+      <div id="rdx-apply-check" class="rdx-check" hidden>
+        <h3>Éléments à vérifier</h3>
+        <ul id="rdx-apply-check-list"></ul>
+        <p id="rdx-apply-check-note" class="muted small"></p>
+      </div>
+      <label class="chk rdx-confirm"><input id="rdx-confirm" type="checkbox"> J'ai compris : l'information sous les zones sera détruite.</label>
+      <div class="dialog-actions"><button id="rdx-apply-cancel" type="button" class="secondary">Annuler</button><button id="rdx-apply-ok" type="button" class="primary" disabled>Appliquer le caviardage</button></div>
+    </div>
+  </div>
+
+  <!-- Aide intégrée (F1) : contenu dans js/help-content.js -->
+  <section id="helpws" class="helpws" aria-label="Aide" hidden>
+    <header class="help-head">
+      <h2>Aide</h2>
+      <input id="help-q" type="search" placeholder="Rechercher dans l'aide (ex. échelle, caviardage, Ctrl+D)" aria-label="Rechercher dans l'aide">
+      <span id="help-count" class="muted small" aria-live="polite"></span>
+      <button id="help-close" type="button" class="secondary">Fermer (Échap)</button>
+    </header>
+    <div class="help-main">
+      <nav id="help-nav" class="help-nav" aria-label="Sommaire de l'aide"></nav>
+      <article id="help-body" class="help-body" tabindex="-1"></article>
+    </div>
+  </section>
+
+  <!-- Ordre de tabulation des champs créés -->
+  <div id="fldorder" class="overlay-dialog" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="fldorder-title">
+      <h2 id="fldorder-title">Ordre de tabulation</h2>
+      <p class="muted small">Ordre dans lequel la touche Tab parcourt les champs (dans Spin A Doc et dans le fichier : ordre des champs sur chaque page). Choisissez une ligne, puis Monter / Descendre (ou Alt + flèches).</p>
+      <ol id="fldorder-list" class="fo-list" role="listbox" tabindex="0" aria-label="Champs dans l'ordre de tabulation"></ol>
+      <div class="fo-tools"><button type="button" id="fldorder-up" class="secondary">Monter</button><button type="button" id="fldorder-down" class="secondary">Descendre</button><button type="button" id="fldorder-auto" class="secondary">Par position</button></div>
+      <div class="dialog-actions"><button id="fldorder-cancel" type="button" class="secondary">Annuler</button><button id="fldorder-ok" type="button" class="primary">Valider</button></div>
+    </div>
+  </div>
+
+  <!-- Nettoyer les métadonnées -->
+  <div id="rdx-meta" class="overlay-dialog" hidden>
+    <div class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="rdx-meta-title">
+      <h2 id="rdx-meta-title">Nettoyer les métadonnées</h2>
+      <p class="muted small">Les métadonnées peuvent contenir l'information caviardée (titre, auteur, nom du fichier d'origine dans « créateur »…). Les éléments cochés sont retirés à l'enregistrement (annulable).</p>
+      <div id="rdx-meta-list" class="rdx-meta-list"></div>
+      <div class="dialog-actions"><button id="rdx-meta-cancel" type="button" class="secondary">Annuler</button><button id="rdx-meta-ok" type="button" class="primary">Retirer à l'enregistrement</button></div>
+    </div>
+  </div>
+
+  <!-- Créer un tampon -->
+  <div id="stampdlg" class="overlay-dialog" hidden>
+    <div class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="stampdlg-title">
+      <h2 id="stampdlg-title">Créer un tampon</h2>
+      <div class="seg" role="tablist" aria-label="Type de tampon">
+        <button type="button" role="tab" id="sd-tab-text" aria-selected="true">Tampon texte</button>
+        <button type="button" role="tab" id="sd-tab-img" aria-selected="false">À partir d'une image</button>
+      </div>
+      <div id="sd-text" class="form-grid">
+        <label for="sd-label">Texte</label><input id="sd-label" type="text" maxlength="40" value="Mon tampon">
+        <label for="sd-color">Couleur</label><input id="sd-color" type="color" value="#1a8c33">
+        <label for="sd-frame">Cadre</label><input id="sd-frame" type="checkbox" checked>
+      </div>
+      <div id="sd-img" class="form-grid" hidden>
+        <label>Image</label><div><button type="button" id="sd-pick" class="secondary">Choisir une image…</button> <span id="sd-picked" class="muted"></span></div>
+      </div>
+      <div id="sd-preview" class="preview-box checker"></div>
+      <div class="form-grid"><label for="sd-name">Nom dans la bibliothèque</label><input id="sd-name" type="text" maxlength="60" placeholder="(facultatif)"></div>
+      <div class="dialog-actions"><button id="sd-cancel" class="secondary">Annuler</button><button id="sd-save" class="primary">Enregistrer et utiliser</button></div>
+    </div>
+  </div>
+
+  <!-- Nouvelle signature -->
+  <div id="sigdlg" class="overlay-dialog" hidden>
+    <div class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="sigdlg-title">
+      <h2 id="sigdlg-title">Nouvelle signature</h2>
+      <div class="seg" role="tablist" aria-label="Méthode">
+        <button type="button" role="tab" id="sg-tab-draw" aria-selected="true">Dessiner</button>
+        <button type="button" role="tab" id="sg-tab-import" aria-selected="false">Importer une image</button>
+        <button type="button" role="tab" id="sg-tab-type" aria-selected="false">Taper mon nom</button>
+      </div>
+      <div id="sg-draw"><canvas id="sg-canvas" class="sigpad checker" width="720" height="240" tabindex="0" aria-label="Zone de dessin de la signature"></canvas>
+        <div class="form-row"><button type="button" id="sg-clear" class="secondary">Effacer</button></div></div>
+      <div id="sg-import" hidden><button type="button" id="sg-pick" class="secondary">Choisir une image…</button>
+        <p class="muted small">Le fond blanc est rendu transparent automatiquement.</p><div id="sg-import-prev" class="preview-box checker"></div></div>
+      <div id="sg-type" hidden>
+        <div class="form-grid"><label for="sg-text">Nom</label><input id="sg-text" type="text" maxlength="40" placeholder="Votre nom">
+          <label for="sg-font">Police manuscrite</label><select id="sg-font"><option>Caveat</option><option>Dancing Script</option><option>Homemade Apple</option></select></div>
+        <div id="sg-type-prev" class="preview-box checker"></div></div>
+      <div class="form-grid"><label for="sg-color">Couleur</label><input id="sg-color" type="color" value="#1b2a6b">
+        <label for="sg-name">Nom dans la bibliothèque</label><input id="sg-name" type="text" maxlength="60" placeholder="(facultatif)"></div>
+      <p class="menu-note">Une signature posée est une image figée dans la page. Ce n'est <strong>pas</strong> une signature électronique qualifiée ou certifiée : elle n'a pas la valeur juridique d'une signature numérique.</p>
+      <div class="dialog-actions"><button id="sg-cancel" class="secondary">Annuler</button><button id="sg-save" class="primary">Enregistrer et utiliser</button></div>
+    </div>
+  </div>
+
+  <!-- Réglages -->
+  <div id="settings" class="overlay-dialog" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title">Réglages</h2>
+      <fieldset>
+        <legend>Animations</legend>
+        <label class="radio"><input type="radio" name="anim" value="full"> Complètes</label>
+        <label class="radio"><input type="radio" name="anim" value="reduced"> Réduites</label>
+        <label class="radio"><input type="radio" name="anim" value="none"> Aucune</label>
+        <p class="muted small">Par défaut, suit le réglage « réduire les animations » de Windows.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Tampons</legend>
+        <label class="radio">Nom de l'utilisateur <input id="opt-username" type="text" maxlength="40" placeholder="ex. C. Exemple"></label>
+        <p class="muted small">Ajouté sous le tampon quand l'option « Nom » est cochée.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Navigation</legend>
+        <label class="radio"><input type="checkbox" id="opt-panmiddle"> Déplacer avec le clic molette</label>
+        <p class="muted small">Maintenir le bouton du milieu et bouger la souris déplace le document. Espace + glisser (bouton gauche) fait de même.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Annotations</legend>
+        <label class="radio"><input type="checkbox" id="opt-keeptool"> Garder l'outil actif après un tracé</label>
+        <p class="muted small">Quitter l'outil : Échap, « Souris » ou un autre outil. Ctrl + clic = sélection temporaire d'un objet.</p>
+      </fieldset>
+      <div class="dialog-actions">
+        <button id="btn-winint" class="secondary">Intégration à Windows</button>
+        <button id="btn-about" class="secondary">À propos</button>
+        <button id="settings-close" class="primary">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intégration à Windows : lecteur PDF par défaut (« Ouvrir avec », page des Paramètres de Windows) -->
+  <div id="winint" class="overlay-dialog" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="winint-title">
+      <h2 id="winint-title">Intégration à Windows</h2>
+      <fieldset>
+        <legend>Lecteur PDF</legend>
+        <p class="small">Spin A Doc figure dans « Ouvrir avec » pour les fichiers PDF, sans remplacer votre lecteur actuel. Pour en faire le lecteur par défaut, choisissez-le dans les Paramètres de Windows.</p>
+        <div class="winint-actions"><button id="winint-defaults" type="button" class="secondary">Applications par défaut de Windows…</button></div>
+      </fieldset>
+      <div class="dialog-actions"><button id="winint-close" class="primary">Fermer</button></div>
+    </div>
+  </div>
+
+  <!-- À propos -->
+  <div id="about" class="overlay-dialog" hidden>
+    <div class="dialog wide" role="dialog" aria-modal="true" aria-labelledby="about-title">
+      <div class="about-head">
+        <img src="assets/logo.svg" alt="" width="72" height="72">
+        <div><h2 id="about-title">Spin A Doc</h2><p id="about-version" class="muted"></p><p id="about-copyright" class="muted small"></p></div>
+      </div>
+      <p id="about-offline" class="about-offline"><strong>100 % hors-ligne, aucune donnée envoyée</strong> : pas de connexion réseau, pas de télémétrie, pas de mise à jour automatique. <span id="about-net"></span></p>
+      <div class="about-diag"><button id="about-diag" type="button" class="secondary">Copier les informations de diagnostic</button><span id="about-diag-msg" class="muted small" aria-live="polite"></span></div>
+      <p class="muted small">Pour signaler un problème : collez ces informations dans votre message (version, Windows, mémoire, écrans, noms des imprimantes ; aucun nom de fichier, chemin ni contenu de document).</p>
+      <h3>Licences tierces</h3>
+      <pre id="about-licenses"></pre>
+      <div class="dialog-actions"><button id="about-close" class="primary">Fermer</button></div>
+    </div>
+  </div>
+
+  <script src="../vendor/pdf-lib/pdf-lib.min.js"></script>
+  <script src="measure.js"></script>
+  <script src="snap-geometry.js"></script>
+  <script src="print-layout.js"></script>
+  <script src="print-compose.js"></script>
+  <script src="shapes.js"></script>
+  <script src="callout.js"></script>
+  <script src="numbering.js"></script>
+  <script src="ocr.js"></script>
+  <script src="compare.js"></script>
+  <script src="compare-report.js"></script>
+  <script src="forms.js"></script>
+  <script src="image-meta.js"></script>
+  <script src="page-ops.js"></script>
+  <script src="fields.js"></script>
+  <script src="fields-pdf.js"></script>
+  <script src="outline.js"></script>
+  <script src="redact-active.js"></script>
+  <script src="redact-pdf.js"></script>
+  <script src="pdf-edit.js"></script>
+  <script src="text-info.js"></script>
+  <script src="doc-model.js"></script>
+  <script src="search.js"></script>
+  <script src="redact.js"></script>
+  <script src="redact-raster.js"></script>
+  <script src="redact-apply.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

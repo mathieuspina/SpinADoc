@@ -1,0 +1,156 @@
+{
+ "note": "Commandes du ruban AVANT le regroupement de la passe 5a (0.11.0). test-ribbon vérifie que chacune existe toujours.",
+ "tabs": {
+  "home": {
+   "label": "Accueil",
+   "cmds": [
+    "open",
+    "recents",
+    "print",
+    "merge-open",
+    "saveas",
+    "tool-select",
+    "search",
+    "pg-rot-left",
+    "pg-rot-right",
+    "undo",
+    "redo"
+   ]
+  },
+  "annotate": {
+   "label": "Annoter",
+   "cmds": [
+    "tool-select",
+    "tool-add",
+    "tool-edit",
+    "tool-callout",
+    "m-snap",
+    "tool-note",
+    "stamps-menu",
+    "image-insert",
+    "sig-menu",
+    "tool-line",
+    "tool-arrow",
+    "tool-rect",
+    "tool-ellipse",
+    "tool-polygon",
+    "tool-polyline",
+    "tool-cloud",
+    "tool-highlight",
+    "tool-underline",
+    "tool-strike",
+    "tool-hlrect",
+    "tool-pen",
+    "tool-eraser",
+    "obj-copy",
+    "obj-paste",
+    "obj-duplicate",
+    "obj-delete",
+    "obj-front",
+    "obj-back",
+    "props"
+   ]
+  },
+  "pages": {
+   "label": "Pages",
+   "cmds": [
+    "pg-select-all",
+    "pg-rot-left",
+    "pg-rot-right",
+    "pg-delete",
+    "pg-dup",
+    "pg-extract",
+    "pg-blank",
+    "pg-insert",
+    "merge-open",
+    "pg-number",
+    "pg-number-preview",
+    "pg-crop",
+    "pg-split"
+   ]
+  },
+  "measure": {
+   "label": "Mesure",
+   "cmds": [
+    "tool-m-dist",
+    "tool-m-poly",
+    "tool-m-area",
+    "tool-m-angle",
+    "tool-m-dim",
+    "tool-m-circle",
+    "m-scale",
+    "tool-m-calib",
+    "m-snap",
+    "m-include",
+    "tool-m-hole",
+    "m-lock",
+    "m-panel",
+    "m-csv"
+   ]
+  },
+  "document": {
+   "label": "Document",
+   "cmds": [
+    "doc-export-images",
+    "doc-properties",
+    "doc-optimize",
+    "doc-protect",
+    "doc-ocr",
+    "ocr-lowconf",
+    "ocr-remove",
+    "doc-compare",
+    "form-highlight",
+    "form-flatten",
+    "form-flatten-now"
+   ]
+  },
+  "forms": {
+   "label": "Formulaire",
+   "cmds": [
+    "tool-field-text",
+    "tool-field-check",
+    "tool-field-radio",
+    "fld-radio-new",
+    "tool-field-combo",
+    "tool-field-list",
+    "tool-field-date",
+    "fld-order",
+    "al-left",
+    "al-center",
+    "al-right",
+    "al-top",
+    "al-middle",
+    "al-bottom",
+    "fld-preview",
+    "props"
+   ]
+  },
+  "redact": {
+   "label": "Caviarder",
+   "cmds": [
+    "tool-redact",
+    "rdx-find",
+    "rdx-clear",
+    "rdx-apply",
+    "rdx-ocr",
+    "rdx-meta"
+   ]
+  },
+  "view": {
+   "label": "Affichage",
+   "cmds": [
+    "zoom-out",
+    "zoom-in",
+    "fit-width",
+    "fit-page",
+    "mode-continuous",
+    "mode-single",
+    "spread",
+    "rotate-right",
+    "rotate-left",
+    "fullscreen",
+    "sidebar"
+   ]
+  }
+ }
+}

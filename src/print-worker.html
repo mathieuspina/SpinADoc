@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Spin A Doc : travail d'impression</title>
+</head>
+<body>
+  <script src="../vendor/pdf-lib/pdf-lib.min.js"></script>
+  <script src="print-layout.js"></script>
+  <script src="print-compose.js"></script>
+  <script type="module" src="js/print-worker.js"></script>
+</body>
+</html>
